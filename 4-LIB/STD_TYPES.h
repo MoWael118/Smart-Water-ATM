@@ -65,7 +65,6 @@ typedef long double f128;
 #define NULL_POINTER   		    2
 #define BUSY_FUNC       		3
 #define CONVERSION_NO_COMPLETE  4
-
 #endif
 
 

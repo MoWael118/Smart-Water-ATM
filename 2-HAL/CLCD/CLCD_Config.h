@@ -27,7 +27,7 @@
  *
  */
 
-#define LCD_MODULE LCD_16X2
+#define LCD_MODULE LCD_20X4
 /*
  * 1-> LCD_8BIT_MODE
  * 2-> LCD_4BIT_MODE
