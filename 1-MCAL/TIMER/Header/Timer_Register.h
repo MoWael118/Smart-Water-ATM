@@ -7,7 +7,8 @@
 
 #ifndef HEADER_TIMER_REGISTER_H_
 #define HEADER_TIMER_REGISTER_H_
-#include "../../../LIBRARY/stdtype.h"
+#include "../../../4-LIB/STD_TYPES.h"
+
 /******************** TIMER0 REGISTERS ***************************/
 #define TIMER0_TCCR0		(*(volatile u8*)0x53)
 #define TIMER0_TCNT0        (*(volatile u8*)0x52)
