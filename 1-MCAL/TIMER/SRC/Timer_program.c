@@ -5,8 +5,8 @@
  *      Author: mhmd wael
  */
 
-#include "../../../LIBRARY/stdtype.h"
-#include "../../../LIBRARY/BitMath.h"
+#include "../../../4-LIB/STD_TYPES.h"
+#include "../../../4-LIB/BIT_MATH.h"
 #include "../Header/Timer_Interface.h"
 
 static void (*pvCallBackFuncs[NumberOfINTs])(void)= {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL} ;
