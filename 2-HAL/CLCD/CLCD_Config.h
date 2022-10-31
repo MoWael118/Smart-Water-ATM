@@ -12,12 +12,12 @@
 #ifndef _CLCD_CONFIG_H_
 #define _CLCD_CONFIG_H_
 
-#define CLCD_DATA_PORT   DIO_u8PORTD
+#define CLCD_DATA_PORT   DIO_u8PORTC
 
-#define CLCD_CTRL_PORT   DIO_u8PORTC
-#define CLCD_RS_PIN      DIO_u8Pin0
-#define CLCD_RW_PIN      DIO_u8Pin1
-#define CLCD_E_PIN       DIO_u8Pin2
+#define CLCD_CTRL_PORT   DIO_u8PORTB
+#define CLCD_RS_PIN      DIO_u8Pin5
+#define CLCD_RW_PIN      DIO_u8Pin6
+#define CLCD_E_PIN       DIO_u8Pin7
 
 
 

@@ -11,7 +11,7 @@
 #ifndef KEYPAD_CONFIG_H_
 #define KEYPAD_CONFIG_H_
 
-#define KEYPAD_PORT             DIO_u8PORTA
+#define KEYPAD_PORT             DIO_u8PORTD
 
 #define KEYPAD_COL0_PIN         DIO_u8Pin0
 #define KEYPAD_COL1_PIN 	    DIO_u8Pin1
@@ -26,11 +26,11 @@
 #define COLUMN_NUM       4
 #define ROW_NUM          4
 
-#define KEYPAD_NO_PRESSED_KEY   0xff
 
-#define KEYPAD_ARR_VALUE       { {1,2,3,4},\
-                                 {5,6,7,8},\
-								 {9,10,11,12},\
-								 {13,14,15,16} }
+
+#define KEYPAD_ARR_VALUE       { { '1' , '2' , '3' , 'A' },\
+                                 { '4' , '5' , '6' , 'B' },\
+								 { '7' , '8' , '9' , 'C' },\
+								 { '*' , '0' , '#' , 'D' } }
 
 #endif /* 2_HAL_KEYPAD_KEYPAD_CONFIG_H_ */
