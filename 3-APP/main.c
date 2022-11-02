@@ -4,7 +4,6 @@
  *  Created on: Oct 29, 2022
  *      Author: moham
  */
-
 #include "../4-LIB/STD_TYPES.h"
 #include "../4-LIB/BIT_MATH.h"
 #include "../1-MCAL/DIO/DIO_Interface.h"
@@ -12,19 +11,14 @@
 #include "../2-HAL/KEYPAD/KEYPAD_Interface.h"
 #include "../1-MCAL/PORT/PORT_Interface.h"
 #include <util/delay.h>
-
 u8 User_Choice =NULL;
 void (* PTR_To_User_Choice)(void) =NULL;
-
-
-
 u8 MainMenu(void);
 void Refill_Mode(void);
 void Menu_Choosing(void);
 void BottleNeddedMode(void);
-void BackToMainMenu (void);
-
-
+void BackToMainMenu(void);
+void BottleRecycle(void);
 void main(void)
 {
 	PORT_voidInit();
@@ -36,13 +30,9 @@ void main(void)
 	while(1)
 	{
 		BackToMainMenu();
-		PTR_To_User_Choice();
+
 	}
 }
-
-
-
-
 u8 MainMenu(void)
 {
 	u8 Local_Choice=NULL;
@@ -73,6 +63,7 @@ void Menu_Choosing(void)
 {
 	switch (User_Choice){
 	case '1': // set global pointer to bottle recycle function
+		PTR_To_User_Choice=&BottleRecycle;
 		break;
 	case '2': // set global pointer to 2- Bottle needed function
 		PTR_To_User_Choice = &BottleNeddedMode;
@@ -128,7 +119,6 @@ void Refill_Mode(void)
 		Refill_Mode();
 	}
 }
-
 void BottleNeddedMode(void)
 {
 	u8 Local_u8PressedKey = KEYPAD_NO_PRESSED_KEY ;
@@ -211,11 +201,37 @@ void BottleNeddedMode(void)
 		BottleNeddedMode();
 		break;
 	}
-
+}
+void BottleRecycle(void)
+{
+	u8 Local_u8PressedKey = KEYPAD_NO_PRESSED_KEY ;
+	/*To get sure screen is clear*/
+	CLCD_voidClearScreen();
+	/*Ask user if he want to recycle bottles*/
+	CLCD_u8SendString("Do you want to ");
+	CLCD_u8GoToRowColumn(1,0);
+	CLCD_u8SendString("recycle Bottles");
+	CLCD_u8GoToRowColumn(2,0);
+	CLCD_u8SendString("1-Yes");
+	CLCD_u8GoToRowColumn(3,0);
+	CLCD_u8SendString("2-Back to main menu");
+	/*Wait for the user to enter a number*/
+	Local_u8PressedKey = KEYPAD_u8PollingUntilKeyPressed();
+	switch(Local_u8PressedKey)
+	{
+	case '1':
+		/*Start counting number of bottles inserted*/
+		break;
+	case'2':
+		/*Back to main menu*/
+		BackToMainMenu();
+		break;
+	}
 }
 void BackToMainMenu (void)
 {
 	CLCD_voidClearScreen();
 	User_Choice = MainMenu();
 	Menu_Choosing();
+	PTR_To_User_Choice();
 }
