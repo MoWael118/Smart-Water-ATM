@@ -127,20 +127,13 @@ void BottleNeddedMode(void)
 
 	CLCD_u8GoToRowColumn(0,0);
 	CLCD_u8SendString("Select an Option :");
-	_delay_ms(2000);
 
-	/*Clearing Display To Show Options To User*/
-	CLCD_voidClearScreen();
-
-	CLCD_u8GoToRowColumn(0,0);
-	CLCD_u8SendString("1 - Capacity = 500mL");
 	CLCD_u8GoToRowColumn(1,0);
-	CLCD_u8SendString("2 - Capacity = 1L");
+	CLCD_u8SendString("1 - Capacity = 500mL");
 	CLCD_u8GoToRowColumn(2,0);
-	CLCD_u8SendString("3 - Back to Main Menu");
-
-	/*Display Number That User Choose in the Last Line*/
+	CLCD_u8SendString("2 - Capacity = 1L");
 	CLCD_u8GoToRowColumn(3,0);
+	CLCD_u8SendString("3 - Back to Main Menu");
 
 	Local_u8PressedKey = KEYPAD_u8PollingUntilKeyPressed();
 
@@ -148,9 +141,6 @@ void BottleNeddedMode(void)
 	{
 	case '1':
 		/*500mL Option*/
-		/*Display Number 1 that user chose on screen*/
-		CLCD_voidSendData(Local_u8PressedKey);
-		_delay_ms(1500);
 		CLCD_voidClearScreen();
 		CLCD_u8SendString("Please Insert 4 EGP");
 		/*Function Polling until Right amount of money is inserted*/
@@ -165,9 +155,6 @@ void BottleNeddedMode(void)
 		break;
 	case '2':
 		/*1L Option*/
-		/*Display Number 2 that user chose on screen*/
-		CLCD_voidSendData(Local_u8PressedKey);
-		_delay_ms(1500);
 		CLCD_voidClearScreen();
 		CLCD_u8SendString("Please Insert 6 EGP");
 		/*Function Polling until Right amount of money is inserted*/
@@ -183,10 +170,6 @@ void BottleNeddedMode(void)
 		break;
 	case '3':
 		/*Back to Main Menu Option*/
-		/*Display Number 3 that user chose on screen*/
-		CLCD_voidSendData(Local_u8PressedKey);
-		_delay_ms(1500);
-		CLCD_voidClearScreen();
 		BackToMainMenu();
 		break;
 	default :
