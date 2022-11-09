@@ -31,6 +31,8 @@ void ICU_SetEdgeAsTrigger(u8 Local_u8Edge);
 u16 ICU_u16ReadInputCapture(void);
 void ICU_voidSetInterruptState(u8 state);
 
+void TIMER0_voidStop  ( void );
+
 
 
 
