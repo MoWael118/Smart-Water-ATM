@@ -19,22 +19,22 @@
 void KEYPAD_voidInit(void)
 {
 	/*Column Pins Direction As Output*/
-	DIO_u8SetPinDirection( KEYPAD_PORT , KEYPAD_COL0_PIN , DIO_u8PIN_OUTPUT ) ;
-	DIO_u8SetPinDirection( KEYPAD_PORT , KEYPAD_COL1_PIN , DIO_u8PIN_OUTPUT ) ;
-	DIO_u8SetPinDirection( KEYPAD_PORT , KEYPAD_COL2_PIN , DIO_u8PIN_OUTPUT ) ;
-	DIO_u8SetPinDirection( KEYPAD_PORT , KEYPAD_COL3_PIN , DIO_u8PIN_OUTPUT ) ;
+	DIO_u8SetPinDirection( KEYPAD_PORT_COL , KEYPAD_COL0_PIN , DIO_u8PIN_OUTPUT ) ;
+	DIO_u8SetPinDirection( KEYPAD_PORT_COL , KEYPAD_COL1_PIN , DIO_u8PIN_OUTPUT ) ;
+	DIO_u8SetPinDirection( KEYPAD_PORT_COL , KEYPAD_COL2_PIN , DIO_u8PIN_OUTPUT ) ;
+	DIO_u8SetPinDirection( KEYPAD_PORT_COL , KEYPAD_COL3_PIN , DIO_u8PIN_OUTPUT ) ;
 
 	/*Set Column Pins Initially High */
-	DIO_u8SetPinValue( KEYPAD_PORT , KEYPAD_COL0_PIN , DIO_u8PIN_HIGH ) ;
-	DIO_u8SetPinValue( KEYPAD_PORT , KEYPAD_COL1_PIN , DIO_u8PIN_HIGH ) ;
-	DIO_u8SetPinValue( KEYPAD_PORT , KEYPAD_COL2_PIN , DIO_u8PIN_HIGH ) ;
-	DIO_u8SetPinValue( KEYPAD_PORT , KEYPAD_COL3_PIN , DIO_u8PIN_HIGH ) ;
+	DIO_u8SetPinValue( KEYPAD_PORT_COL , KEYPAD_COL0_PIN , DIO_u8PIN_HIGH ) ;
+	DIO_u8SetPinValue( KEYPAD_PORT_COL , KEYPAD_COL1_PIN , DIO_u8PIN_HIGH ) ;
+	DIO_u8SetPinValue( KEYPAD_PORT_COL , KEYPAD_COL2_PIN , DIO_u8PIN_HIGH ) ;
+	DIO_u8SetPinValue( KEYPAD_PORT_COL , KEYPAD_COL3_PIN , DIO_u8PIN_HIGH ) ;
 
 	/*Set Row Pins As Input and Enable Pull Up Resistor*/
-	DIO_u8PinPullUpResistor( KEYPAD_PORT , KEYPAD_ROW0_PIN ) ;
-	DIO_u8PinPullUpResistor( KEYPAD_PORT , KEYPAD_ROW1_PIN ) ;
-	DIO_u8PinPullUpResistor( KEYPAD_PORT , KEYPAD_ROW2_PIN ) ;
-	DIO_u8PinPullUpResistor( KEYPAD_PORT , KEYPAD_ROW3_PIN ) ;
+	DIO_u8PinPullUpResistor( KEYPAD_PORT_ROW , KEYPAD_ROW0_PIN ) ;
+	DIO_u8PinPullUpResistor( KEYPAD_PORT_ROW , KEYPAD_ROW1_PIN ) ;
+	DIO_u8PinPullUpResistor( KEYPAD_PORT_ROW , KEYPAD_ROW2_PIN ) ;
+	DIO_u8PinPullUpResistor( KEYPAD_PORT_ROW , KEYPAD_ROW3_PIN ) ;
 
 }
 
@@ -64,13 +64,13 @@ u8 KEYPAD_u8GetPressedKey(void)
 	for( Local_u8ColumnIndex = 0 ; Local_u8ColumnIndex < COLUMN_NUM ; Local_u8ColumnIndex++ )
 	{
 		/*Activate Current Column (LOW)*/
-		DIO_u8SetPinValue( KEYPAD_PORT , Local_u8KeypadColumnArr[ Local_u8ColumnIndex ] , DIO_u8PIN_LOW );
+		DIO_u8SetPinValue( KEYPAD_PORT_COL , Local_u8KeypadColumnArr[ Local_u8ColumnIndex ] , DIO_u8PIN_LOW );
 
 		/*Iterate through Rows */
 		for( Local_u8RowIndex = 0 ; Local_u8RowIndex < ROW_NUM ; Local_u8RowIndex++ )
 		{
 			/*Read Current Row*/
-			DIO_u8GetPinValue( KEYPAD_PORT , Local_u8KeypadRowArr[Local_u8RowIndex] , &Local_u8PinState );
+			DIO_u8GetPinValue( KEYPAD_PORT_ROW , Local_u8KeypadRowArr[Local_u8RowIndex] , &Local_u8PinState );
 
 			/*Check If Switch is Pressed*/
 			if( Local_u8PinState == KEY_PRESSED )
@@ -80,14 +80,14 @@ u8 KEYPAD_u8GetPressedKey(void)
 				/*Polling Until Key is Released To Prevent Returning More than Once*/
 				while( Local_u8PinState == KEY_PRESSED )
 				{
-					DIO_u8GetPinValue( KEYPAD_PORT , Local_u8KeypadRowArr[Local_u8RowIndex] , &Local_u8PinState );
+					DIO_u8GetPinValue( KEYPAD_PORT_ROW , Local_u8KeypadRowArr[Local_u8RowIndex] , &Local_u8PinState );
 				}
 				return Local_u8PressedKey;
 			}
 		}
 
 		/*Deactivate Current Column (HIGH)*/
-		DIO_u8SetPinValue( KEYPAD_PORT ,  Local_u8KeypadColumnArr[ Local_u8ColumnIndex ] , DIO_u8PIN_HIGH );
+		DIO_u8SetPinValue( KEYPAD_PORT_COL ,  Local_u8KeypadColumnArr[ Local_u8ColumnIndex ] , DIO_u8PIN_HIGH );
 	}
 
 	return Local_u8PressedKey ;

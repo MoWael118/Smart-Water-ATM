@@ -11,7 +11,12 @@
 #ifndef KEYPAD_CONFIG_H_
 #define KEYPAD_CONFIG_H_
 
+<<<<<<< HEAD
+#define KEYPAD_PORT_COL             DIO_u8PORTA
+#define KEYPAD_PORT_ROW             DIO_u8PORTB
+=======
 #define KEYPAD_PORT             DIO_u8PORTA
+>>>>>>> 5ed695c74b9a67cdb2f72004d33919d69bdef2e2
 
 #define KEYPAD_COL0_PIN         DIO_u8Pin0
 #define KEYPAD_COL1_PIN 	    DIO_u8Pin1
