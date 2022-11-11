@@ -11,14 +11,17 @@
 #include "../2-HAL/KEYPAD/KEYPAD_Interface.h"
 #include "../1-MCAL/PORT/PORT_Interface.h"
 #include <util/delay.h>
+
 u8 User_Choice =NULL;
 void (* PTR_To_User_Choice)(void) =NULL;
+
 u8 MainMenu(void);
 void Refill_Mode(void);
 void Menu_Choosing(void);
 void BottleNeddedMode(void);
 void BackToMainMenu(void);
 void BottleRecycle(void);
+
 void main(void)
 {
 	PORT_voidInit();
@@ -61,7 +64,9 @@ u8 MainMenu(void)
 }
 void Menu_Choosing(void)
 {
-	switch (User_Choice){
+	switch (User_Choice)
+	{
+
 	case '1': // set global pointer to bottle recycle function
 		PTR_To_User_Choice=&BottleRecycle;
 		break;
@@ -160,7 +165,6 @@ void BottleNeddedMode(void)
 		/*Function Polling until Right amount of money is inserted*/
 
 		/*Motor 2 ON For Specified Angle*/
-
 
 		/*Display to user that bottle is ready to get it from the درج*/
 		_delay_ms(1000);
