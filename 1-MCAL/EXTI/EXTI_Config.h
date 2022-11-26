@@ -25,7 +25,7 @@
  *
  * */
 
-#define INT0_SENSE_CONTROL RISING_EDGE
+#define INT0_SENSE_CONTROL ON_CHANGE
 
 /*OPTIONS:
  *

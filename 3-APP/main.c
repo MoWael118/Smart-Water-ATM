@@ -10,11 +10,16 @@
 #include "../2-HAL/CLCD/CLCD_Interface.h"
 #include "../2-HAL/KEYPAD/KEYPAD_Interface.h"
 #include "../1-MCAL/PORT/PORT_Interface.h"
+#include "../2-HAL/IR_Sensor/IR_Sensor.h"
+#include "../1-MCAL/GIE/GIE_Interface.h"
 #include <util/delay.h>
 
 u8 User_Choice =NULL;
 void (* PTR_To_User_Choice)(void) =NULL;
-
+u8 NoOfBottlesInserted=NULL;
+f32 Credit_Recycle=NULL;
+u8 Bottle_Exist =NULL;
+f32 Price = NULL;
 u8 MainMenu(void);
 void Refill_Mode(void);
 void Menu_Choosing(void);
@@ -25,11 +30,13 @@ void BottleRecycle(void);
 void main(void)
 {
 	PORT_voidInit();
+GIE_voidEnable();
 	CLCD_voidInit();
 	CLCD_u8GoToRowColumn(0,0);
 	CLCD_u8SendString("Welcome");
 	_delay_ms(2000);
-
+	EXTI_voidInit0();
+EXTI_u8Int0CallBack();
 	while(1)
 	{
 		BackToMainMenu();
@@ -98,12 +105,26 @@ void Refill_Mode(void)
 	{
 	/*Show Needed Price For 500mL */
 	case '1' :
+		Price=3;
 		CLCD_voidClearScreen();
 		CLCD_u8GoToRowColumn(0,0);
-		CLCD_u8SendString("Price needed = 3 EGP");
+		if(Credit_Recycle == NULL)
+		{
+			CLCD_u8SendString("Price needed =");
+			CLCD_WriteFloatingNumber(Price,1,0,14);
+			CLCD_u8SendString("EGP");
+		}
+		if(Credit_Recycle != NULL)
+			{
+				CLCD_u8SendString("Price before =");
+				CLCD_WriteFloatingNumber(Price,1,0,14);
+				CLCD_u8SendString("EGP");
+				CLCD_u8GoToRowColumn()
+			}
+
 		break;
-		/*Show Needed Price For 1L */
 	case '2' :
+		/*Show Needed Price For 1L */
 		CLCD_voidClearScreen();
 		CLCD_u8GoToRowColumn(0,0);
 		CLCD_u8SendString("Price needed = 5 EGP");
@@ -191,29 +212,30 @@ void BottleNeddedMode(void)
 }
 void BottleRecycle(void)
 {
-	u8 Local_u8PressedKey = KEYPAD_NO_PRESSED_KEY ;
 	/*To get sure screen is clear*/
 	CLCD_voidClearScreen();
-	/*Ask user if he want to recycle bottles*/
-	CLCD_u8SendString("Do you want to ");
-	CLCD_u8GoToRowColumn(1,0);
-	CLCD_u8SendString("recycle Bottles");
-	CLCD_u8GoToRowColumn(2,0);
-	CLCD_u8SendString("1-Yes");
-	CLCD_u8GoToRowColumn(3,0);
-	CLCD_u8SendString("2-Back to main menu");
-	/*Wait for the user to enter a number*/
-	Local_u8PressedKey = KEYPAD_u8PollingUntilKeyPressed();
-	switch(Local_u8PressedKey)
+	/*Start counting number of bottles inserted*/
+	CLCD_u8SendString("Press 0 to exit");
+	while (KEYPAD_u8GetPressedKey() !=  '0' )
 	{
-	case '1':
-		/*Start counting number of bottles inserted*/
-		break;
-	case'2':
-		/*Back to main menu*/
-		BackToMainMenu();
-		break;
+		if(IR_Sensor_u8Read() == 1)
+		{
+			while(IR_Sensor_u8Read()== 1);
+			NoOfBottlesInserted++;
+		}
+		CLCD_u8GoToRowColumn(1,0);
+		CLCD_u8SendString("Number of bottles ");
+		CLCD_u8GoToRowColumn(2,0);
+		CLCD_u8SendString("inserted =");
+		CLCD_voidWriteIntegerNumber(NoOfBottlesInserted,2,11);
+		CLCD_u8GoToRowColumn(3,0);
+		CLCD_u8SendString("Your Credit=");
+		CLCD_WriteFloatingNumber((f32)(NoOfBottlesInserted/2.0),2,3,12);
+		CLCD_u8GoToRowColumn(3,17);
+		CLCD_u8SendString("EGP");
 	}
+	Credit_Recycle= (f32)(NoOfBottlesInserted/2.0);
+	BackToMainMenu();
 }
 void BackToMainMenu (void)
 {
@@ -221,4 +243,8 @@ void BackToMainMenu (void)
 	User_Choice = MainMenu();
 	Menu_Choosing();
 	PTR_To_User_Choice();
+}
+void Sensing_Bottle_Exist(void)
+{
+	TOGGLE_BIT(Bottle_Exist,0);
 }
