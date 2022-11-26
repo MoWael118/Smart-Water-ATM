@@ -7,6 +7,7 @@
 #include "../4-LIB/STD_TYPES.h"
 #include "../4-LIB/BIT_MATH.h"
 #include "../1-MCAL/DIO/DIO_Interface.h"
+#include "../1-MCAL/EXTI/EXTI_Interface.h"
 #include "../2-HAL/CLCD/CLCD_Interface.h"
 #include "../2-HAL/KEYPAD/KEYPAD_Interface.h"
 #include "../1-MCAL/PORT/PORT_Interface.h"
@@ -14,29 +15,34 @@
 #include "../1-MCAL/GIE/GIE_Interface.h"
 #include <util/delay.h>
 
-u8 User_Choice =NULL;
-void (* PTR_To_User_Choice)(void) =NULL;
+u8 User_Choice = NULL ;
+void (* PTR_To_User_Choice)(void) = NULL ;
 u8 NoOfBottlesInserted=NULL;
 f32 Credit_Recycle=NULL;
 u8 Bottle_Exist =NULL;
 f32 Price = NULL;
+
+
 u8 MainMenu(void);
 void Refill_Mode(void);
 void Menu_Choosing(void);
 void BottleNeddedMode(void);
 void BackToMainMenu(void);
 void BottleRecycle(void);
+void Sensing_Bottle_Exist(void);
 
 void main(void)
 {
 	PORT_voidInit();
-GIE_voidEnable();
+	GIE_voidEnable();
 	CLCD_voidInit();
 	CLCD_u8GoToRowColumn(0,0);
 	CLCD_u8SendString("Welcome");
 	_delay_ms(2000);
+
 	EXTI_voidInit0();
-EXTI_u8Int0CallBack();
+	EXTI_u8Int0CallBack(&Sensing_Bottle_Exist);
+
 	while(1)
 	{
 		BackToMainMenu();
@@ -105,31 +111,63 @@ void Refill_Mode(void)
 	{
 	/*Show Needed Price For 500mL */
 	case '1' :
-		Price=3;
+
+		Price = 3 ;
 		CLCD_voidClearScreen();
 		CLCD_u8GoToRowColumn(0,0);
 		if(Credit_Recycle == NULL)
 		{
-			CLCD_u8SendString("Price needed =");
-			CLCD_WriteFloatingNumber(Price,1,0,14);
-			CLCD_u8SendString("EGP");
+			CLCD_u8SendString( "Price Needed =" ) ;
+			CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
+			CLCD_u8SendString("EGP") ;
+
+
 		}
-		if(Credit_Recycle != NULL)
-			{
-				CLCD_u8SendString("Price before =");
-				CLCD_WriteFloatingNumber(Price,1,0,14);
-				CLCD_u8SendString("EGP");
-				CLCD_u8GoToRowColumn()
-			}
+		else if(Credit_Recycle != NULL)
+		{
+			CLCD_u8SendString( "Price =" ) ;
+			CLCD_WriteFloatingNumber( Price , 1 , 0 , 8 ) ;
+			CLCD_u8SendString( "EGP" ) ;
+			CLCD_u8GoToRowColumn( 1 , 0 ) ;
+			CLCD_u8SendString( "Credit = " ) ;
+			CLCD_WriteFloatingNumber( Credit_Recycle , 2 , 1 , 9 );
+			CLCD_u8GoToRowColumn( 2 , 0 ) ;
+			CLCD_u8SendString( "Price Needed =" ) ;
+			CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , 2 , 2 , 14 );
+
+
+		}
 
 		break;
 	case '2' :
-		/*Show Needed Price For 1L */
+
+		Price = 5 ;
 		CLCD_voidClearScreen();
 		CLCD_u8GoToRowColumn(0,0);
-		CLCD_u8SendString("Price needed = 5 EGP");
+		if(Credit_Recycle == NULL)
+		{
+			CLCD_u8SendString( "Price Needed =" ) ;
+			CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
+			CLCD_u8SendString("EGP") ;
+
+
+		}
+		else if(Credit_Recycle != NULL)
+		{
+			CLCD_u8SendString( "Price =" ) ;
+			CLCD_WriteFloatingNumber( Price , 1 , 0 , 8 ) ;
+			CLCD_u8SendString( "EGP" ) ;
+			CLCD_u8GoToRowColumn( 1 , 0 ) ;
+			CLCD_u8SendString( "Credit = " ) ;
+			CLCD_WriteFloatingNumber( Credit_Recycle , 2 , 1 , 9 );
+			CLCD_u8GoToRowColumn( 2 , 0 ) ;
+			CLCD_u8SendString( "Price Needed =" ) ;
+			CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , 2 , 2 , 14 );
+
+
+		}
 		break;
-		/*Get Back To Main Menu*/
+
 	case '3' :
 		/*Call For Main menu Function*/
 		BackToMainMenu();
