@@ -13,6 +13,7 @@
 #include "../1-MCAL/PORT/PORT_Interface.h"
 #include "../2-HAL/IR_Sensor/IR_Sensor.h"
 #include "../1-MCAL/GIE/GIE_Interface.h"
+#include "../2-HAL/Coin_Module/Coin_Module.h"
 #include <util/delay.h>
 
 u8 User_Choice = NULL ;
@@ -21,7 +22,7 @@ u8 NoOfBottlesInserted=NULL;
 f32 Credit_Recycle=NULL;
 u8 Bottle_Exist =NULL;
 f32 Price = NULL;
-
+f32 Coin_Module_Price = NULL;
 
 u8 MainMenu(void);
 void Refill_Mode(void);
@@ -35,14 +36,12 @@ void main(void)
 {
 	PORT_voidInit();
 	GIE_voidEnable();
+	EXTI_voidInit0();
+	EXTI_u8Int0CallBack(&Sensing_Bottle_Exist);
 	CLCD_voidInit();
 	CLCD_u8GoToRowColumn(0,0);
 	CLCD_u8SendString("Welcome");
 	_delay_ms(2000);
-
-	EXTI_voidInit0();
-	EXTI_u8Int0CallBack(&Sensing_Bottle_Exist);
-
 	while(1)
 	{
 		BackToMainMenu();
@@ -121,7 +120,6 @@ void Refill_Mode(void)
 			CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
 			CLCD_u8SendString("EGP") ;
 
-
 		}
 		else if(Credit_Recycle != NULL)
 		{
@@ -137,7 +135,14 @@ void Refill_Mode(void)
 
 
 		}
-
+		_delay_ms(2000);
+		CLCD_voidClearScreen();
+              while(Coin_Module_Price != (Price -Credit_Recycle))
+              {
+            	  Coin_Module_Price+=Coin_Value();
+            	  CLCD_u8SendString( "Price Needed =" ) ;
+            	  CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+              }
 		break;
 	case '2' :
 
@@ -182,6 +187,7 @@ void Refill_Mode(void)
 		_delay_ms(2000);
 		Refill_Mode();
 	}
+
 }
 void BottleNeddedMode(void)
 {

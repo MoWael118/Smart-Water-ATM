@@ -36,7 +36,7 @@
  *
  * */
 
-#define INT1_SENSE_CONTROL  ON_CHANGE
+#define INT1_SENSE_CONTROL  RISING_EDGE
 
 
 /*OPTIONS:
