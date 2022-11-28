@@ -137,13 +137,16 @@ void Refill_Mode(void)
 		}
 		_delay_ms(2000);
 		CLCD_voidClearScreen();
+		CLCD_u8SendString( "Price Needed =" ) ;
+		CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
               while(Coin_Module_Price != (Price -Credit_Recycle))
               {
-            	  Coin_Module_Price+=Coin_Value();
-            	  CLCD_u8SendString( "Price Needed =" ) ;
+            	  Coin_Module_Price += Coin_Value();
             	  CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+
               }
-		break;
+
+    		break;
 	case '2' :
 
 		Price = 5 ;

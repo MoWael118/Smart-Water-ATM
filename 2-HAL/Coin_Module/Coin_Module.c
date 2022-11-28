@@ -11,14 +11,18 @@
 #include "Coin_Module.h"
 
 u8 Coin_Module_Freq=NULL;
+u8 Coin_Module_Freq1=NULL;
+
 
 f32 Coin_Value(void)
 {
 EXTI_voidInit1();
-EXTI_u8Int1CallBack(&ISR_Coin_module);
-while(Coin_Module_Freq == NULL);
-EXTI_u8IntDisable(INT1);
-return Coin_Module_Freq/OneEGP_Pulses;
+EXTI_u8Int1CallBack(	&ISR_Coin_module	);
+while(	Coin_Module_Freq == NULL	);
+Coin_Module_Freq1	=	Coin_Module_Freq	;
+Coin_Module_Freq = NULL	;
+EXTI_u8IntDisable(	INT1  )	;
+return Coin_Module_Freq1/OneEGP_Pulses;
 }
 
 void ISR_Coin_module(void)
