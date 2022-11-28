@@ -14,13 +14,23 @@
 #include "../2-HAL/IR_Sensor/IR_Sensor.h"
 #include "../1-MCAL/GIE/GIE_Interface.h"
 #include "../2-HAL/Coin_Module/Coin_Module.h"
+#include "../2-HAL/FlowMeter/FlowMeter_Interface.h"
 #include <util/delay.h>
 
+#define EXIST     1
+#define NON_EXIST 0
+
+u16 Flow_Volume = NULL ;
+u16 Flow_Rate   = NULL ;
 u8 User_Choice = NULL ;
 void (* PTR_To_User_Choice)(void) = NULL ;
 u8 NoOfBottlesInserted=NULL;
 f32 Credit_Recycle=NULL;
-u8 Bottle_Exist =NULL;
+
+u8 Bottle_Exist = NON_EXIST;
+
+u16 Water_Capacity = NULL ;
+
 f32 Price = NULL;
 f32 Coin_Module_Price = NULL;
 
@@ -31,6 +41,7 @@ void BottleNeddedMode(void);
 void BackToMainMenu(void);
 void BottleRecycle(void);
 void Sensing_Bottle_Exist(void);
+void Bottle_Filling (void);
 
 void main(void)
 {
@@ -106,59 +117,32 @@ void Refill_Mode(void)
 	CLCD_u8SendString("3- Back to Main Menu");
 	/*GET pressed key from user*/
 	KeyPad_State = KEYPAD_u8PollingUntilKeyPressed();
+
 	switch (KeyPad_State)
 	{
 	/*Show Needed Price For 500mL */
 	case '1' :
-
-		Price = 3 ;
-		CLCD_voidClearScreen();
-		CLCD_u8GoToRowColumn(0,0);
-		if(Credit_Recycle == NULL)
-		{
-			CLCD_u8SendString( "Price Needed =" ) ;
-			CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
-			CLCD_u8SendString("EGP") ;
-
-		}
-		else if(Credit_Recycle != NULL)
-		{
-			CLCD_u8SendString( "Price =" ) ;
-			CLCD_WriteFloatingNumber( Price , 1 , 0 , 8 ) ;
-			CLCD_u8SendString( "EGP" ) ;
-			CLCD_u8GoToRowColumn( 1 , 0 ) ;
-			CLCD_u8SendString( "Credit = " ) ;
-			CLCD_WriteFloatingNumber( Credit_Recycle , 2 , 1 , 9 );
-			CLCD_u8GoToRowColumn( 2 , 0 ) ;
-			CLCD_u8SendString( "Price Needed =" ) ;
-			CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , 2 , 2 , 14 );
-
-
-		}
-		_delay_ms(2000);
-		CLCD_voidClearScreen();
-		CLCD_u8SendString( "Price Needed =" ) ;
-		CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
-              while(Coin_Module_Price != (Price -Credit_Recycle))
-              {
-            	  Coin_Module_Price += Coin_Value();
-            	  CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
-
-              }
-
-    		break;
 	case '2' :
 
-		Price = 5 ;
+		if( KeyPad_State == '1' )
+		{
+			Price = 3 ;
+			Water_Capacity = 500 ;
+		}
+		else if ( KeyPad_State == '2' )
+		{
+			Price = 5 ;
+			Water_Capacity = 1000 ;
+		}
+
 		CLCD_voidClearScreen();
 		CLCD_u8GoToRowColumn(0,0);
+
 		if(Credit_Recycle == NULL)
 		{
 			CLCD_u8SendString( "Price Needed =" ) ;
 			CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
 			CLCD_u8SendString("EGP") ;
-
-
 		}
 		else if(Credit_Recycle != NULL)
 		{
@@ -171,9 +155,45 @@ void Refill_Mode(void)
 			CLCD_u8GoToRowColumn( 2 , 0 ) ;
 			CLCD_u8SendString( "Price Needed =" ) ;
 			CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , 2 , 2 , 14 );
-
-
 		}
+		_delay_ms(2000);
+
+		CLCD_voidClearScreen();
+		CLCD_u8SendString( "Price Needed =" ) ;
+
+		CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+
+		while( Coin_Module_Price != ( Price - Credit_Recycle ) )
+		{
+			Coin_Module_Price += Coin_Value();
+			CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+		}
+
+		_delay_ms(1500);
+		CLCD_voidClearScreen();
+		CLCD_u8SendString( "Payment is Received" ) ;
+
+		_delay_ms(1500);
+		CLCD_voidClearScreen(  ) ;
+
+		if( Bottle_Exist == NON_EXIST )
+		{
+			CLCD_u8SendString( "Put Your Bottle" ) ;
+		}
+
+		Bottle_Filling();
+
+		while ( Bottle_Exist == NON_EXIST  )
+		{
+			CLCD_u8GoToRowColumn(0,0);
+			CLCD_u8SendString( "Return Your Bottle" ) ;
+			Bottle_Filling();
+		}
+
+		_delay_ms(2000);
+		CLCD_voidClearScreen();
+		CLCD_u8SendString( "Enjoy Your Water" );
+
 		break;
 
 	case '3' :
@@ -293,5 +313,40 @@ void BackToMainMenu (void)
 }
 void Sensing_Bottle_Exist(void)
 {
-	TOGGLE_BIT(Bottle_Exist,0);
+	TOGGLE_BIT( Bottle_Exist , 0 );
+}
+
+void Bottle_Filling (void)
+{
+
+	while( Bottle_Exist == NON_EXIST ) ;
+	CLCD_voidClearScreen();
+	while( ( Bottle_Exist == EXIST ) && ( Flow_Volume <= Water_Capacity ) )
+	{
+		/*Pump on */
+		DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin5 , DIO_u8PIN_HIGH ) ;
+
+		/*valve on*/
+		DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin6 , DIO_u8PIN_HIGH ) ;
+
+		FLOWMETER_voidGetVolume( &Flow_Volume , &Flow_Rate ) ;
+
+		CLCD_u8GoToRowColumn(0,0);
+		CLCD_u8SendString( "Flow Rate = " );
+		CLCD_voidWriteIntegerNumber( (s32)Flow_Rate  , 0 , 12 );
+		CLCD_u8GoToRowColumn(1,0);
+		CLCD_u8SendString("Volume = ") ;
+		CLCD_voidWriteIntegerNumber( (s32)Flow_Volume , 1 , 9 ) ;
+
+	}
+
+	FLOWMETER_voidFinished();
+
+	/*pump off*/
+	DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin5 , DIO_u8PIN_LOW ) ;
+
+	/*Valve off*/
+	DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin6 , DIO_u8PIN_LOW  ) ;
+	_delay_ms(1000);
+	CLCD_voidClearScreen();
 }

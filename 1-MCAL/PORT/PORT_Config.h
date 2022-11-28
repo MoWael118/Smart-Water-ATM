@@ -23,9 +23,9 @@
 #define PORTA_PIN1_DIR  1
 #define PORTA_PIN2_DIR  1
 #define PORTA_PIN3_DIR  1
-#define PORTA_PIN4_DIR  0
-#define PORTA_PIN5_DIR  0
-#define PORTA_PIN6_DIR  0
+#define PORTA_PIN4_DIR  0 /*IR Recycle*/
+#define PORTA_PIN5_DIR  1 /*Pump*/
+#define PORTA_PIN6_DIR  1 /*Valve*/
 #define PORTA_PIN7_DIR  0
 
 #define PORTB_PIN0_DIR  1
