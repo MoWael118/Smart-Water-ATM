@@ -20,8 +20,8 @@
 #define EXIST     1
 #define NON_EXIST 0
 
-u16 Flow_Volume = NULL ;
-u16 Flow_Rate   = NULL ;
+s16 Flow_Volume = NULL ;
+s16 Flow_Rate   = NULL ;
 u8 User_Choice = NULL ;
 void (* PTR_To_User_Choice)(void) = NULL ;
 u8 NoOfBottlesInserted=NULL;
@@ -46,6 +46,7 @@ void Bottle_Filling (void);
 void main(void)
 {
 	PORT_voidInit();
+	DIO_u8GetPinValue(DIO_u8PORTD,DIO_u8Pin2,&Bottle_Exist);     // To check if botttle exist before programme started
 	GIE_voidEnable();
 	EXTI_voidInit0();
 	EXTI_u8Int0CallBack(&Sensing_Bottle_Exist);
@@ -193,7 +194,8 @@ void Refill_Mode(void)
 		_delay_ms(2000);
 		CLCD_voidClearScreen();
 		CLCD_u8SendString( "Enjoy Your Water" );
-
+		_delay_ms(2000);
+		Coin_Module_Price = NULL ;
 		break;
 
 	case '3' :
@@ -313,29 +315,34 @@ void BackToMainMenu (void)
 }
 void Sensing_Bottle_Exist(void)
 {
-	TOGGLE_BIT( Bottle_Exist , 0 );
+	DIO_u8GetPinValue(DIO_u8PORTD,DIO_u8Pin2,&Bottle_Exist);
 }
 
 void Bottle_Filling (void)
 {
-
+	u8 Flag=0;
 	while( Bottle_Exist == NON_EXIST ) ;
 	CLCD_voidClearScreen();
-	while( ( Bottle_Exist == EXIST ) && ( Flow_Volume <= Water_Capacity ) )
+	while( ( Bottle_Exist == EXIST ) && ( Flow_Volume < Water_Capacity ) )
 	{
-		/*Pump on */
-		DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin5 , DIO_u8PIN_HIGH ) ;
+		if(Flag ==0){
+			/*Pump on */
+			DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin5 , DIO_u8PIN_HIGH ) ;
 
-		/*valve on*/
-		DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin6 , DIO_u8PIN_HIGH ) ;
+			/*valve on*/
+			DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin6 , DIO_u8PIN_HIGH ) ;
 
+			CLCD_u8GoToRowColumn(1,0);
+			CLCD_u8SendString("Volume = ") ;
+			//CLCD_u8GoToRowColumn(0,0);
+			//CLCD_u8SendString( "Flow Rate = " );
+			Flag =1;
+		}
 		FLOWMETER_voidGetVolume( &Flow_Volume , &Flow_Rate ) ;
 
-		CLCD_u8GoToRowColumn(0,0);
-		CLCD_u8SendString( "Flow Rate = " );
-		CLCD_voidWriteIntegerNumber( (s32)Flow_Rate  , 0 , 12 );
-		CLCD_u8GoToRowColumn(1,0);
-		CLCD_u8SendString("Volume = ") ;
+
+		//CLCD_voidWriteIntegerNumber( (s32)Flow_Rate  , 0 , 12 );
+
 		CLCD_voidWriteIntegerNumber( (s32)Flow_Volume , 1 , 9 ) ;
 
 	}

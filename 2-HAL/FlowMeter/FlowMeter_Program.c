@@ -13,8 +13,8 @@
 #include "../../1-MCAL/EXTI/EXTI_Interface.h"
 #include "../../1-MCAL/TIMER/Header/Timer_Interface.h"
 
-u16 * FLOWMETER_VolumeReading = NULL ;
-u16 * FLOWMETER_FlowRate = NULL ;
+s16 * FLOWMETER_VolumeReading = NULL ;
+s16 * FLOWMETER_FlowRate = NULL ;
 
 u16 Frequency  = 0 ;
 u16 Volume = 0 ;
@@ -26,7 +26,7 @@ u16 Previous_Freq = 0;
 
 u8 Function_Called = CALLED_ONCE ;
 
-void FLOWMETER_Init( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRate )
+void FLOWMETER_Init( s16 * Copy_pu16VolumeInSec , s16 * Copy_pu16FlowRate )
 {
 	/*Initialize Global Variable to Carry Volume*/
 	FLOWMETER_VolumeReading = Copy_pu16VolumeInSec ;
@@ -46,7 +46,7 @@ void FLOWMETER_Init( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRate )
 
 }
 
-void FLOWMETER_voidGetVolume( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRate )
+void FLOWMETER_voidGetVolume( s16 * Copy_pu16VolumeInSec , s16 * Copy_pu16FlowRate )
 {
 	if( Function_Called == CALLED_ONCE )
 	{
@@ -58,7 +58,7 @@ void FLOWMETER_voidGetVolume( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRa
 	while( ISR_Flag == UNDONE ) ;
 
 	/*Flow Rate Equation in ml/s*/
-	FlowRate_ml_s = (u16)( ( Previous_Freq * (u32)60000 ) / ( (u16)27000  ) ) ;
+	FlowRate_ml_s = (s16)( ( Previous_Freq * (s32)60000 ) / ( (s16)27000  ) ) ;
 
 	/*Calculating Volume */
 	Volume = Volume + FlowRate_ml_s ;
@@ -68,7 +68,7 @@ void FLOWMETER_voidGetVolume( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRa
 
 	/*Dereferencing Global Pointer to Flow Rate Variable */
 	/* Flow Rate is Calculated with in 1/80 from second so multiplied by 80 in order to make it in one second */
-	*FLOWMETER_FlowRate = FlowRate_ml_s * (u16)80 ;
+	*FLOWMETER_FlowRate = FlowRate_ml_s * (s16)80 ;
 
 	/*Turn Back ISR_Flag -> (UNDONE)*/
 	ISR_Flag = UNDONE ;
@@ -80,7 +80,7 @@ void FLOWMETER_voidGetVolume( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRa
 
 void FLOWMETER_voidFinished( void )
 {
-	/*Disable Timer0 Peripheral and EXTI*/
+	/*Disable Timer0 Peripheral and EXTI2*/
 	EXTI_u8IntDisable(INT2);
 	TIMER0_voidStop();
 }
