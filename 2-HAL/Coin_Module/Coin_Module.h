@@ -8,6 +8,7 @@
 #ifndef COIN_MODULE_COIN_MODULE_H_
 #define COIN_MODULE_COIN_MODULE_H_
 
+#define HalfEGP_Pulses          1.0
 #define OneEGP_Pulses           2.0
 
 f32 Coin_Value(void);

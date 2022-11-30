@@ -37,26 +37,28 @@ void FLOWMETER_Init( s16 * Copy_pu16VolumeInSec , s16 * Copy_pu16FlowRate )
 	/*EXTI2 In it and Set Call Back */
 	EXTI_u8Int2SenseControl(RISING_EDGE);
 	EXTI_u8Int2CallBack( &EXTI ) ;
-	EXTI_u8IntEnable(INT2);
+
 
 	/*Timer0 In it and Set Call Back*/
 	TIMER_SetCallBackFunc( TIMER0_COMPINT , &TIMER_ISR ) ;
 	TIMER_VoidSetCompareMatchValue( TIMER0 , COMPARE_MATCH_VALUE ) ;
-	TIMER0_VoidInit( TIMER0_CTCMode );
+	//TIMER0_VoidInit( TIMER0_CTCMode );
 
 }
 
 void FLOWMETER_voidGetVolume( s16 * Copy_pu16VolumeInSec , s16 * Copy_pu16FlowRate )
 {
-	if( Function_Called == CALLED_ONCE )
-	{
-		Function_Called = CALLED_MORE_THAN_ONCE;
-		FLOWMETER_Init( Copy_pu16VolumeInSec , Copy_pu16FlowRate );
-	}
+	EXTI_u8IntEnable(INT2);
+	TIMER0_VoidInit( TIMER0_CTCMode );
+	//if( Function_Called == CALLED_ONCE )
+	//{
+	//	Function_Called = CALLED_MORE_THAN_ONCE;
+	//	FLOWMETER_Init( Copy_pu16VolumeInSec , Copy_pu16FlowRate );
+	//}
 
 	/*Polling Until Required Number of Interrupts is Reached , In Our Case -> 50 */
 	while( ISR_Flag == UNDONE ) ;
-
+	FLOWMETER_voidFinished();
 	/*Flow Rate Equation in ml/s*/
 	FlowRate_ml_s = (s16)( ( Previous_Freq * (s32)60000 ) / ( (s16)27000  ) ) ;
 
@@ -68,7 +70,7 @@ void FLOWMETER_voidGetVolume( s16 * Copy_pu16VolumeInSec , s16 * Copy_pu16FlowRa
 
 	/*Dereferencing Global Pointer to Flow Rate Variable */
 	/* Flow Rate is Calculated with in 1/80 from second so multiplied by 80 in order to make it in one second */
-	*FLOWMETER_FlowRate = FlowRate_ml_s * (s16)80 ;
+	*FLOWMETER_FlowRate = FlowRate_ml_s * (s16)5 ;
 
 	/*Turn Back ISR_Flag -> (UNDONE)*/
 	ISR_Flag = UNDONE ;
@@ -92,10 +94,11 @@ void EXTI (void)
 
 void TIMER_ISR(void)
 {
+	//FLOWMETER_voidFinished();
 	static u16 Local_u16Counter = 0 ;
 	Local_u16Counter++ ;
 
-	if( Local_u16Counter == 50 ) /* 1/80 from second passed */
+	if( Local_u16Counter == 400 ) /* 1/80 from second passed */
 	{
 		/*Required Number of Interrupts is Reached*/
 		ISR_Flag = DONE ;

@@ -30,7 +30,7 @@ f32 Credit_Recycle=NULL;
 u8 Bottle_Exist = NON_EXIST;
 
 u16 Water_Capacity = NULL ;
-
+u16 Size=NULL;
 f32 Price = NULL;
 f32 Coin_Module_Price = NULL;
 
@@ -51,6 +51,7 @@ void main(void)
 	EXTI_voidInit0();
 	EXTI_u8Int0CallBack(&Sensing_Bottle_Exist);
 	CLCD_voidInit();
+	FLOWMETER_Init(&Flow_Volume,&Flow_Rate);
 	CLCD_u8GoToRowColumn(0,0);
 	CLCD_u8SendString("Welcome");
 	_delay_ms(2000);
@@ -143,7 +144,7 @@ void Refill_Mode(void)
 		{
 			CLCD_u8SendString( "Price Needed =" ) ;
 			CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
-			CLCD_u8SendString("EGP") ;
+
 		}
 		else if(Credit_Recycle != NULL)
 		{
@@ -196,6 +197,7 @@ void Refill_Mode(void)
 		CLCD_u8SendString( "Enjoy Your Water" );
 		_delay_ms(2000);
 		Coin_Module_Price = NULL ;
+		Credit_Recycle=NULL;
 		break;
 
 	case '3' :
@@ -216,7 +218,7 @@ void Refill_Mode(void)
 }
 void BottleNeddedMode(void)
 {
-	u8 Local_u8PressedKey = KEYPAD_NO_PRESSED_KEY ;
+	u8 KeyPad_State = KEYPAD_NO_PRESSED_KEY ;
 	/*Clear LCD Display*/
 	CLCD_voidClearScreen();
 
@@ -224,44 +226,75 @@ void BottleNeddedMode(void)
 	CLCD_u8SendString("Select an Option :");
 
 	CLCD_u8GoToRowColumn(1,0);
-	CLCD_u8SendString("1- Capacity = 500mL");
+	CLCD_u8SendString("1- Size = 500mL");
 	CLCD_u8GoToRowColumn(2,0);
-	CLCD_u8SendString("2- Capacity = 1L");
+	CLCD_u8SendString("2- Size = 1L");
 	CLCD_u8GoToRowColumn(3,0);
 	CLCD_u8SendString("3- Back to Main Menu");
 
-	Local_u8PressedKey = KEYPAD_u8PollingUntilKeyPressed();
+	KeyPad_State = KEYPAD_u8PollingUntilKeyPressed();
 
-	switch( Local_u8PressedKey )
+	switch( KeyPad_State )
 	{
-	case '1':
-		/*500mL Option*/
-		CLCD_voidClearScreen();
-		CLCD_u8SendString("Please Insert 4 EGP");
-		/*Function Polling until Right amount of money is inserted*/
+	/*Show Needed Price For 500mL */
+		case '1' :
+		case '2' :
 
-		/*Motor 1 ON For Specified Angle*/
+			if( KeyPad_State == '1' )
+			{
+				Price = 3 ;
+				Size = 500 ;
+			}
+			else if ( KeyPad_State == '2' )
+			{
+				Price = 4 ;
+				Size = 1000 ;
+			}
 
-		/*Display to user that bottle is ready to get it from the درج*/
-		_delay_ms(1000);
-		CLCD_voidClearScreen();
-		CLCD_u8SendString("Your Bottle is Ready");
-		_delay_ms(1500);
-		break;
-	case '2':
-		/*1L Option*/
-		CLCD_voidClearScreen();
-		CLCD_u8SendString("Please Insert 6 EGP");
-		/*Function Polling until Right amount of money is inserted*/
+			CLCD_voidClearScreen();
+			CLCD_u8GoToRowColumn(0,0);
 
-		/*Motor 2 ON For Specified Angle*/
+			if(Credit_Recycle == NULL)
+			{
+				CLCD_u8SendString( "Price Needed =" ) ;
+				CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
 
-		/*Display to user that bottle is ready to get it from the درج*/
-		_delay_ms(1000);
-		CLCD_voidClearScreen();
-		CLCD_u8SendString("Your Bottle is Ready");
-		_delay_ms(1500);
-		break;
+			}
+			else if(Credit_Recycle != NULL)
+			{
+				CLCD_u8SendString( "Price =" ) ;
+				CLCD_WriteFloatingNumber( Price , 1 , 0 , 8 ) ;
+				CLCD_u8SendString( "EGP" ) ;
+				CLCD_u8GoToRowColumn( 1 , 0 ) ;
+				CLCD_u8SendString( "Credit = " ) ;
+				CLCD_WriteFloatingNumber( Credit_Recycle , 2 , 1 , 9 );
+				CLCD_u8GoToRowColumn( 2 , 0 ) ;
+				CLCD_u8SendString( "Price Needed =" ) ;
+				CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , 2 , 2 , 14 );
+			}
+			_delay_ms(1000);
+
+			CLCD_voidClearScreen();
+			CLCD_u8SendString( "Price Needed =" ) ;
+
+			CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+
+			while( Coin_Module_Price != ( Price - Credit_Recycle ) )
+			{
+				Coin_Module_Price += Coin_Value();
+				CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+			}
+
+			_delay_ms(1500);
+			CLCD_voidClearScreen();
+			CLCD_u8SendString( "Payment is Received" ) ;
+
+			_delay_ms(1500);
+			CLCD_voidClearScreen() ;
+			CLCD_u8SendString( "Take Your Bottle" ) ;
+			_delay_ms(1000);
+			Credit_Recycle=NULL;
+			break;
 	case '3':
 		/*Back to Main Menu Option*/
 		BackToMainMenu();
