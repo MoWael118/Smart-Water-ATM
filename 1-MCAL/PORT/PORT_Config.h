@@ -11,12 +11,36 @@
 #define PORT_CONFIG_H_
 
 
+
+/*
+                                  ______________________________________
+                                  |             ATMEGA32               |
+  LCD CTRL ( RS PIN )      <----  | B0                              A0 |  ----> KEYPAD COLUMN PIN 1
+  LCD CTRL ( RW PIN )      <----  | B1                              A1 |  ----> KEYPAD COLUMN PIN 2
+  FLOWMETER SENSOR         <----  | B2                              A2 |  ----> KEYPAD COLUMN PIN 3
+  LCD CTRL ( E PIN )       <----  | B3                              A3 |  ----> KEYPAD COLUMN PIN 4
+    KEYPAD ROW PIN 1       <----  | B4                              A4 |  ----> IR SENSOR ( RECYCLE )
+    KEYPAD ROW PIN 2       <----  | B5                              A5 |  ----> DC PUMP
+    KEYPAD ROW PIN 3       <----  | B6                              A6 |  ----> SOLENOID VALVE
+    KEYPAD ROW PIN 4       <----  | B7                              A7 |
+                                  |                                    |
+Stepper Motor 1( 500 mL )  <----  | D0                              C0 |   ----> LCD DATA PIN D0
+Stepper Motor 2( 1 L )     <----  | D1                              C1 |   ----> LCD DATA PIN D1
+ IR SENSOR ( REFILL )      <----  | D2                              C2 |   ----> LCD DATA PIN D2
+ COIN ACCEPTOR MODULE      <----  | D3                              C3 |   ----> LCD DATA PIN D3
+                                  | D4                              C4 |   ----> LCD DATA PIN D4
+                                  | D5                              C5 |   ----> LCD DATA PIN D5
+                                  | D6                              C6 |   ----> LCD DATA PIN D6
+                                  | D7                              C7 |   ----> LCD DATA PIN D7
+                                  |____________________________________|                                                     */
+
+
+
 /*
  * Choose : 0  FOR INPUT
  *          1  FOR OUTPUT
  *
  */
-
 
 /* DIRECTION*/
 #define PORTA_PIN0_DIR  1
@@ -46,8 +70,8 @@
 #define PORTC_PIN6_DIR  1
 #define PORTC_PIN7_DIR  1
 
-#define PORTD_PIN0_DIR  0
-#define PORTD_PIN1_DIR  0
+#define PORTD_PIN0_DIR  1 /*STEPPER MOTOR 1*/
+#define PORTD_PIN1_DIR  1 /*STEPPER MOTOR 2*/
 #define PORTD_PIN2_DIR  0
 #define PORTD_PIN3_DIR  0
 #define PORTD_PIN4_DIR  0

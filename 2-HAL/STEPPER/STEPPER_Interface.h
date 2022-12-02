@@ -57,6 +57,10 @@ void STEPPER_GoBackward(  u8 Copy_u8Port , u8 Copy_u8BluePin , u8 Copy_u8PinkPin
  *----------------------------------------------------------------------------------------------------------------------------*/
 void STEPPER_TurnOFF( u8 Copy_u8Port , u8 Copy_u8BluePin , u8 Copy_u8PinkPin , u8 Copy_u8YellowPin , u8 Copy_u8OrangePin  ) ;
 
+
+/* STEPPER MOTOR DRIVER ( A4988 ) WITH NEMA17 */
+
+void STEPPER_NEMA17_Control( u8 Copy_u8ControlPort , u8 Copy_u8ControlPin , u16 Copy_u16Degree );
 /*---------------------------------------------------------------------------------------*/
 
 #endif /* 2_HAL_STEPPER_STEPPER_INTERFACE_H_ */

@@ -13,4 +13,5 @@
 
 f32 Coin_Value(void);
 void ISR_Coin_module(void);
+
 #endif /* COIN_MODULE_COIN_MODULE_H_ */

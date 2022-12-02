@@ -23,7 +23,7 @@ f32 Coin_Value(void)
 
 	while(	Coin_Module_NO_Pulses == NULL	) ;
 
-	_delay_ms(1);
+	_delay_ms(100);
 
 	Coin_Module_Temp	=	Coin_Module_NO_Pulses	;
 

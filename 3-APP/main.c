@@ -15,52 +15,65 @@
 #include "../1-MCAL/GIE/GIE_Interface.h"
 #include "../2-HAL/Coin_Module/Coin_Module.h"
 #include "../2-HAL/FlowMeter/FlowMeter_Interface.h"
+#include "../2-HAL/STEPPER/STEPPER_Interface.h"
+#include "main.h"
 #include <util/delay.h>
 
-#define EXIST     1
-#define NON_EXIST 0
+
 
 s16 Flow_Volume = NULL ;
-s16 Flow_Rate   = NULL ;
-u8 User_Choice = NULL ;
-void (* PTR_To_User_Choice)(void) = NULL ;
-u8 NoOfBottlesInserted=NULL;
-f32 Credit_Recycle=NULL;
 
-u8 Bottle_Exist = NON_EXIST;
+s16 Flow_Rate   = NULL ;
+
+u8 User_Choice = NULL ;
+
+void (* PTR_To_User_Choice)(void) = NULL ;
+
+u8 NoOfBottlesInserted = NULL ;
+
+f32 Credit_Recycle = NULL ;
+
+u8 Bottle_Exist = NON_EXIST ;
 
 u16 Water_Capacity = NULL ;
-u16 Size=NULL;
-f32 Price = NULL;
+
+u16 Size = NULL ;
+
+f32 Price = NULL ;
+
 f32 Coin_Module_Price = NULL;
 
-u8 MainMenu(void);
-void Refill_Mode(void);
-void Menu_Choosing(void);
-void BottleNeddedMode(void);
-void BackToMainMenu(void);
-void BottleRecycle(void);
-void Sensing_Bottle_Exist(void);
-void Bottle_Filling (void);
+
+
+
 
 void main(void)
 {
-	PORT_voidInit();
-	DIO_u8GetPinValue(DIO_u8PORTD,DIO_u8Pin2,&Bottle_Exist);     // To check if botttle exist before programme started
-	GIE_voidEnable();
-	EXTI_voidInit0();
-	EXTI_u8Int0CallBack(&Sensing_Bottle_Exist);
-	CLCD_voidInit();
-	FLOWMETER_Init(&Flow_Volume,&Flow_Rate);
-	CLCD_u8GoToRowColumn(0,0);
-	CLCD_u8SendString("Welcome");
-	_delay_ms(2000);
+	PORT_voidInit( ) ;
+	DIO_u8GetPinValue( DIO_u8PORTD , DIO_u8Pin2 , &Bottle_Exist ) ;     // To check if bottle exist before program started
+	GIE_voidEnable( ) ;
+	EXTI_voidInit0( ) ;
+	EXTI_u8Int0CallBack( &ISR1_Sensing_Bottle_Exist ) ;
+	CLCD_voidInit( ) ;
+	FLOWMETER_Init( &Flow_Volume , &Flow_Rate ) ;
+	CLCD_u8GoToRowColumn(0,0) ;
+	CLCD_u8SendString("Welcome") ;
+	_delay_ms(2000) ;
+
 	while(1)
 	{
-		BackToMainMenu();
-
+		BackToMainMenu( ) ;
 	}
 }
+
+void BackToMainMenu (void)
+{
+	CLCD_voidClearScreen( ) ;
+	User_Choice = MainMenu( ) ;
+	Menu_Choosing( ) ;
+	PTR_To_User_Choice( ) ;
+}
+
 u8 MainMenu(void)
 {
 	u8 Local_Choice=NULL;
@@ -289,7 +302,19 @@ void BottleNeddedMode(void)
 			CLCD_voidClearScreen();
 			CLCD_u8SendString( "Payment is Received" ) ;
 
-			_delay_ms(1500);
+			if( Size == 500 )
+			{
+				/*Stepper Motor 1 ON*/
+				STEPPER_NEMA17_Control( DIO_u8PORTD , DIO_u8Pin0 , 360 ) ;
+
+			}
+			else if ( Size == 1000 )
+			{
+				/*Stepper Motor 2 ON*/
+				STEPPER_NEMA17_Control( DIO_u8PORTD , DIO_u8Pin1 , 360 ) ;
+			}
+
+			_delay_ms(1000);
 			CLCD_voidClearScreen() ;
 			CLCD_u8SendString( "Take Your Bottle" ) ;
 			_delay_ms(1000);
@@ -339,14 +364,8 @@ void BottleRecycle(void)
 	Credit_Recycle= (f32)(NoOfBottlesInserted/2.0);
 	BackToMainMenu();
 }
-void BackToMainMenu (void)
-{
-	CLCD_voidClearScreen();
-	User_Choice = MainMenu();
-	Menu_Choosing();
-	PTR_To_User_Choice();
-}
-void Sensing_Bottle_Exist(void)
+
+void ISR1_Sensing_Bottle_Exist(void)
 {
 	DIO_u8GetPinValue(DIO_u8PORTD,DIO_u8Pin2,&Bottle_Exist);
 }
