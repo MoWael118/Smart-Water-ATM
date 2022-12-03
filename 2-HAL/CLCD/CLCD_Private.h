@@ -57,6 +57,8 @@
 #define LCD_16X2  1
 #define LCD_20X4  2
 
+
+
 /* LCD_ 20X4  */
 #define ROW_1      0
 #define ROW_2      1
@@ -83,6 +85,29 @@
 #define COL_18     17
 #define COL_19     18
 #define COL_20     19
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #endif /* 2_HAL_CLCD_CLCD_PRIVATE_H_ */
