@@ -60,4 +60,29 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif /* 2_HAL_CLCD_CLCD_PRIVATE_H_ */

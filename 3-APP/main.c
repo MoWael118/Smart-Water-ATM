@@ -50,81 +50,215 @@ f32 Coin_Module_Price = NULL;
 
 void main(void)
 {
+	/* PORT Initialization */
 	PORT_voidInit( ) ;
-	DIO_u8GetPinValue( DIO_u8PORTD , DIO_u8Pin2 , &Bottle_Exist ) ;     // To check if bottle exist before program started
+
+	/* Check If Bottle Exist At The Beginning */
+	DIO_u8GetPinValue( DIO_u8PORTD , DIO_u8Pin2 , &Bottle_Exist ) ;
+
+	/* Global Interrupt Enable For IR Sensor */
 	GIE_voidEnable( ) ;
+
+	/* Interrupt 0 Enable For IR Sensor To Check Bottle Existant */
 	EXTI_voidInit0( ) ;
+
+	/* Call ISR For Interrupt 0 */
 	EXTI_u8Int0CallBack( &ISR1_Sensing_Bottle_Exist ) ;
+
+	/* LCD Initialization */
 	CLCD_voidInit( ) ;
+
+	/*FLOWMETER Initialization */
 	FLOWMETER_Init( &Flow_Volume , &Flow_Rate ) ;
+
+	/*Going To Position Of Row One And Column One On LCD*/
 	CLCD_u8GoToRowColumn(0,0) ;
+
+	/* Displaying Welcome On LCD */
 	CLCD_u8SendString("Welcome") ;
+
+	/* Delay For 2 Seconds To Be Able To See Welcome On LCD */
 	_delay_ms(2000) ;
 
 	while(1)
 	{
+
+		/* Calling Back To Main Menu Function */
 		BackToMainMenu( ) ;
+
 	}
+
 }
+
+
+
+/*
+ * Prototype   : void BackToMainMenu (void)
+ *
+ * Description : It Sets The User Choice And Call Mode Wanted By The User
+ *
+ * Arguments   : void
+ *
+ * return      : void
+ *
+ */
+
 
 
 
 void BackToMainMenu (void)
 {
+	/* Clearing LCD Screen */
 	CLCD_voidClearScreen( ) ;
+
+	/* Setting User Choice (Global Variable) With Return Of Main Menu Function That Return The Mode Wanted By User */
 	User_Choice = MainMenu( ) ;
+
+	/* Calling Menu Choosing Function That Set Pointer To User Choice With Selected Mode */
 	Menu_Choosing( ) ;
+
+	/* Calling The Selected Mode By Calling Pointer To User Choice */
 	PTR_To_User_Choice( ) ;
+
 }
+
+
+
+
+/*
+ * Prototype   : u8 MainMenu(void)
+ *
+ * Description : Interfacing With User To Select Specific Mode
+ *
+ * Arguments   : void
+ *
+ * return      : u8 Local Choice
+ *
+ */
+
 
 
 
 u8 MainMenu(void)
 {
+	/* Initialization Local Variable To Store Number Of Mode Wanted */
 	u8 Local_Choice=NULL;
+
+	/* Clearing LCD Screen */
 	CLCD_voidClearScreen();
+
+	/* Displaying Enter Your Choice On LCD */
 	CLCD_u8SendString("Enter Your Choice");
+
+	/* Going To Position Of Row Two And Column One On LCD */
 	CLCD_u8GoToRowColumn(1,0);
+
+	/* Displaying 1- Bottle Recycle On LCD */
 	CLCD_u8SendString("1- Bottle Recycle");
+
+	/* Going To Position Of Row Three And Column One On LCD */
 	CLCD_u8GoToRowColumn(2,0);
+
+	/* Displaying 2- Bottle needed On LCD */
 	CLCD_u8SendString("2- Bottle needed");
+
+	/* Going To Position Of Row Three And Column One On LCD */
 	CLCD_u8GoToRowColumn(3,0);
+
+	/* Displaying 3- Refill needed On LCD */
 	CLCD_u8SendString("3- Refill");
+
+	/* Setting Local Choice (Local Variable) To KeyPad Input Return */
 	Local_Choice = KEYPAD_u8PollingUntilKeyPressed() ;
+
+	/* Check If The Local Choice Is Not Available Choice */
 	if((Local_Choice >'3') || (Local_Choice<='0'))
 	{
+		/* Clearing LCD Screen */
 		CLCD_voidClearScreen();
+
+		/* Displaying Wrong Input On LCD */
 		CLCD_u8SendString("Wrong Input");
+
+		/* Going To Position Of Row Two And Column One On LCD */
 		CLCD_u8GoToRowColumn(1,0);
+
+		/* Displaying Please enter number On LCD */
 		CLCD_u8SendString("Please enter number");
+
+		/* Going To Position Of Row Three And Column One On LCD */
 		CLCD_u8GoToRowColumn(2,0);
+
+		/* Displaying from(1-3) On LCD */
 		CLCD_u8SendString("from(1-3)");
+
+		/* Delay For 2 Seconds To Be Able To Read LCD */
 		_delay_ms(2000);
+
+		/* Clearing LCD Screen */
 		CLCD_voidClearScreen();
+
+		/* Calling Main Menu Again So The User Will Be Able To Choose Available Mode*/
 		MainMenu();
+
 	}
+
+	/* Returning Local Choice */
 	return Local_Choice;
+
 }
 
 
 
+
+
+
+
+/*
+ * Prototype   : void Menu_Choosing(void)
+ *
+ * Description : It Sets Global Pointer To The Mode Selected By The User
+ *
+ * Arguments   : void
+ *
+ * return      : void
+ *
+ */
 void Menu_Choosing(void)
 {
+	/* Check User Choice Of Wanted Mode*/
 	switch (User_Choice)
 	{
 
-	case '1': // set global pointer to bottle recycle function
+	case '1':
+
+		/* Setting Pointer To User Choice (Global Pointer) To Bottle Recycle Function */
 		PTR_To_User_Choice=&BottleRecycle;
+
 		break;
-	case '2': // set global pointer to 2- Bottle needed function
+
+	case '2':
+
+		/* Setting Pointer To User Choice (Global Pointer) To Bottle Needed Mode Function */
 		PTR_To_User_Choice = &BottleNeddedMode;
+
 		break;
-	case '3': // set global pointer to Refill function
+
+	case '3':
+
+		/* Setting Pointer To User Choice (Global Pointer) To Refill Mode Function */
 		PTR_To_User_Choice=&Refill_Mode;
+
 		break;
+
 	}
+
+	/* Setting User Choice To Null So Next User Can Choose His Mode*/
 	User_Choice=NULL;
+
 }
+
+
 
 
 

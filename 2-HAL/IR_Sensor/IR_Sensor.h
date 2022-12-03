@@ -11,6 +11,16 @@
 
 #define IR_SensorPort      DIO_u8PORTA
 #define IR_SensorPin       DIO_u8Pin4
+/*
+ * Prototype   : u8 IR_Sensor_u8Read(void);
+ *
+ * Description : It Check If The IR Sensor Is Reading Signal Or Not
+ *
+ * Arguments   : void
+ *
+ * return      : u8
+ *
+ */
 
 u8 IR_Sensor_u8Read(void);
 
