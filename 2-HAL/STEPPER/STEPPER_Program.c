@@ -113,11 +113,11 @@ void STEPPER_NEMA17_Control( u8 Copy_u8ControlPort , u8 Copy_u8ControlPin , u16 
 
    u16 Local_u16LoopCounter = 0 ;
 
-   Local_u16NumberOfPulses = (u16)( Copy_u16Degree / 1.8 ) ; /* 1.8 Stepper Motor Step Angle */
+   Local_u16NumberOfPulses = (u16)( Copy_u16Degree / NEMA_17_STEP_ANGLE ) ; /* 1.8 Stepper Motor Step Angle */
 
-   for( Local_u16LoopCounter = 0 ; Local_u16LoopCounter <= Local_u16NumberOfPulses ; Local_u16NumberOfPulses++  )
+   for( Local_u16LoopCounter = 0 ; Local_u16LoopCounter <= Local_u16NumberOfPulses ; Local_u16LoopCounter++  )
    {
-          DIO_u8SetPinValue( Copy_u8ControlPort , Copy_u8ControlPin , DIO_u8PIN_HIGH );        /* For 1900 Freq */
+          DIO_u8SetPinValue( Copy_u8ControlPort , Copy_u8ControlPin , DIO_u8PIN_HIGH );        /* For 1900 Frequency */
           _delay_us( 526 ) ;
           DIO_u8SetPinValue( Copy_u8ControlPort , Copy_u8ControlPin , DIO_u8PIN_LOW );
           _delay_us( 526 ) ;

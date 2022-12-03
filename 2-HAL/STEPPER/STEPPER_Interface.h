@@ -60,6 +60,14 @@ void STEPPER_TurnOFF( u8 Copy_u8Port , u8 Copy_u8BluePin , u8 Copy_u8PinkPin , u
 
 /* STEPPER MOTOR DRIVER ( A4988 ) WITH NEMA17 */
 
+/*----------------------------------------------------------------------------------------------------------------------------
+ *
+ *     NAME     : STEPPER_NEMA17_Control
+ *     FUNCTION : CONTROL NEMA17 STEPPER MOTOR USING STEPPER MOTOR DRIVER A4988
+ *     ARGUMENT : PORT NUMBER   ,  PIN NUMBER , NUMBER OF DEGREES
+ *     RETURN   : VOID
+ *
+ *----------------------------------------------------------------------------------------------------------------------------*/
 void STEPPER_NEMA17_Control( u8 Copy_u8ControlPort , u8 Copy_u8ControlPin , u16 Copy_u16Degree );
 /*---------------------------------------------------------------------------------------*/
 

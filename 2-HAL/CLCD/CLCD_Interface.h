@@ -15,6 +15,33 @@
 #define SHIFT_LEFT  1
 #define SHIFT_RIGHT 2
 
+/* LCD ROWS & COLS  */
+#define ROW_1      0
+#define ROW_2      1
+#define ROW_3      2
+#define ROW_4      3
+
+#define COL_1      0
+#define COL_2      1
+#define COL_3      2
+#define COL_4      3
+#define COL_5      4
+#define COL_6      5
+#define COL_7      6
+#define COL_8      7
+#define COL_9      8
+#define COL_10     9
+#define COL_11     10
+#define COL_12     11
+#define COL_13     12
+#define COL_14     13
+#define COL_15     14
+#define COL_16     15
+#define COL_17     16
+#define COL_18     17
+#define COL_19     18
+#define COL_20     19
+
 /***************************************************************************************************************/
 /***************************************************************************************************************/
 /*****************      NAME : CLCD_voidInit             								  **********************/

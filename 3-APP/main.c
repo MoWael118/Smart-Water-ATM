@@ -1,9 +1,14 @@
-/*
- * main.c
- *
- *  Created on: Oct 29, 2022
- *      Author: moham
- */
+/****************************************************************************************/
+/****************************************************************************************/
+/*************                AUTHORS : SW_TEAM               ***************************/
+/*************                LAYER :    APP  			      ***************************/
+/*************                VERSION : 2.00		          ***************************/
+/*************                DATE : 3/12/2022		          ***************************/
+/****************************************************************************************/
+/****************************************************************************************/
+
+
+
 #include "../4-LIB/STD_TYPES.h"
 #include "../4-LIB/BIT_MATH.h"
 #include "../1-MCAL/DIO/DIO_Interface.h"
@@ -20,10 +25,9 @@
 #include <util/delay.h>
 
 
+u16 Flow_Volume = NULL ;
 
-s16 Flow_Volume = NULL ;
-
-s16 Flow_Rate   = NULL ;
+u16 Flow_Rate   = NULL ;
 
 u8 User_Choice = NULL ;
 
@@ -42,9 +46,6 @@ u16 Size = NULL ;
 f32 Price = NULL ;
 
 f32 Coin_Module_Price = NULL;
-
-
-
 
 
 void main(void)
@@ -66,6 +67,8 @@ void main(void)
 	}
 }
 
+
+
 void BackToMainMenu (void)
 {
 	CLCD_voidClearScreen( ) ;
@@ -73,6 +76,8 @@ void BackToMainMenu (void)
 	Menu_Choosing( ) ;
 	PTR_To_User_Choice( ) ;
 }
+
+
 
 u8 MainMenu(void)
 {
@@ -100,6 +105,9 @@ u8 MainMenu(void)
 	}
 	return Local_Choice;
 }
+
+
+
 void Menu_Choosing(void)
 {
 	switch (User_Choice)
@@ -117,6 +125,9 @@ void Menu_Choosing(void)
 	}
 	User_Choice=NULL;
 }
+
+
+
 void Refill_Mode(void)
 {
 	u8 KeyPad_State = KEYPAD_NO_PRESSED_KEY;
@@ -229,114 +240,225 @@ void Refill_Mode(void)
 	}
 
 }
+
+
+
+
+/*
+ * Prototype   : void BottleNeddedMode(void)
+ *
+ * Description : Bottle Needed Mode IS Executed
+ *
+ * Arguments   : void
+ *
+ * return      : void
+ *
+ */
+
+
 void BottleNeddedMode(void)
 {
-	u8 KeyPad_State = KEYPAD_NO_PRESSED_KEY ;
-	/*Clear LCD Display*/
-	CLCD_voidClearScreen();
+	/* Local Variable to Hold Pressed Key Value */
+	u8 Local_u8KeypadState = KEYPAD_NO_PRESSED_KEY ;
 
-	CLCD_u8GoToRowColumn(0,0);
+	/* Clear LCD Display */
+	CLCD_voidClearScreen( ) ;
+
+	/* Cursor on First Address Row 0 , Column 0 */
+	CLCD_u8GoToRowColumn( ROW_1 , COL_1 ) ;
 	CLCD_u8SendString("Select an Option :");
 
-	CLCD_u8GoToRowColumn(1,0);
+	/* Displaying First Option */
+	CLCD_u8GoToRowColumn( ROW_2 , COL_1 ) ;
 	CLCD_u8SendString("1- Size = 500mL");
-	CLCD_u8GoToRowColumn(2,0);
+
+	/* Displaying Second Option*/
+	CLCD_u8GoToRowColumn( ROW_3 , COL_1 ) ;
 	CLCD_u8SendString("2- Size = 1L");
-	CLCD_u8GoToRowColumn(3,0);
+
+	/* Displaying Third Option */
+	CLCD_u8GoToRowColumn( ROW_4 , COL_1 ) ;
 	CLCD_u8SendString("3- Back to Main Menu");
 
-	KeyPad_State = KEYPAD_u8PollingUntilKeyPressed();
+	/* Polling Until Any Key is Pressed */
+	Local_u8KeypadState = KEYPAD_u8PollingUntilKeyPressed();
 
-	switch( KeyPad_State )
+	/* Checking On Pressed Key */
+	switch( Local_u8KeypadState )
 	{
-	/*Show Needed Price For 500mL */
-		case '1' :
-		case '2' :
+	/* User Pressed 1 OR 2 */
+	case '1' :
+	case '2' :
+		/*If User Pressed 1 OR 2 This Block of Code will Be Executed*/
 
-			if( KeyPad_State == '1' )
-			{
-				Price = 3 ;
-				Size = 500 ;
-			}
-			else if ( KeyPad_State == '2' )
-			{
-				Price = 4 ;
-				Size = 1000 ;
-			}
+		/* Checking On Pressed Key to Set the Right Price and Size for Each Option */
 
-			CLCD_voidClearScreen();
-			CLCD_u8GoToRowColumn(0,0);
+		if( Local_u8KeypadState == '1' )
+		{
+			/* User Pressed 1 */
+			/* Setting Price and Size of Bottle For First Option */
+			Price = 3   /* 3 EGP   */ ;
+			Size  = 500 /* 500 mL  */ ;
+		}
+		else if ( Local_u8KeypadState == '2' )
+		{
+			/* User Pressed 2 */
+			/* Setting Price and Size of Bottle For Second Option */
+			Price = 4    /* 4 EGP   */ ;
+			Size  = 1000 /* 1000 mL */ ;
+		}
 
-			if(Credit_Recycle == NULL)
-			{
-				CLCD_u8SendString( "Price Needed =" ) ;
-				CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
+		/* Clear Screen From Options */
+		CLCD_voidClearScreen ( ) ;
 
-			}
-			else if(Credit_Recycle != NULL)
-			{
-				CLCD_u8SendString( "Price =" ) ;
-				CLCD_WriteFloatingNumber( Price , 1 , 0 , 8 ) ;
-				CLCD_u8SendString( "EGP" ) ;
-				CLCD_u8GoToRowColumn( 1 , 0 ) ;
-				CLCD_u8SendString( "Credit = " ) ;
-				CLCD_WriteFloatingNumber( Credit_Recycle , 2 , 1 , 9 );
-				CLCD_u8GoToRowColumn( 2 , 0 ) ;
-				CLCD_u8SendString( "Price Needed =" ) ;
-				CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , 2 , 2 , 14 );
-			}
-			_delay_ms(1000);
+		/* Return to Home Address */
+		CLCD_u8GoToRowColumn( ROW_1 , COL_1 ) ;
 
-			CLCD_voidClearScreen();
+		/* Check if User Have Credit From Recycling Process */
+
+		/* User Don't Have Credit From Recycling Process */
+		if( Credit_Recycle == NULL )
+		{
+			/* Display Bottle Price Depending On What User Chose */
+			CLCD_u8SendString( "Price Needed =" ) ;
+			CLCD_WriteFloatingNumber( Price , 2 , ROW_1 , COL_16 ) ;
+		}
+
+		/* User Have Credit From Recycling Process */
+
+		else if( Credit_Recycle != NULL )
+		{
+			/* Displaying Bottle Price */
+			CLCD_u8SendString( "Price =" ) ;
+			CLCD_WriteFloatingNumber( Price , 2 , ROW_1 , COL_9 ) ;
+
+			/* Display ( EGP ) */
+			CLCD_u8GoToRowColumn( ROW_1 , COL_14 ) ;
+			CLCD_u8SendString( "EGP" ) ;
+
+			/* Displaying Credit that User Have From Recycling Process */
+			CLCD_u8GoToRowColumn( ROW_2 , COL_1 ) ;
+			CLCD_u8SendString( "Credit =" ) ;
+
+			CLCD_WriteFloatingNumber( Credit_Recycle , 2 , ROW_2 , COL_10 );
+
+			/* Display ( EGP ) */
+			CLCD_u8GoToRowColumn( ROW_2 , COL_15 ) ;
+			CLCD_u8SendString( "EGP" ) ;
+
+			/* Displaying Price Needed For Bottle After Deducting From it Credit From Recycling Process */
+			CLCD_u8GoToRowColumn( ROW_3 , COL_1 ) ;
 			CLCD_u8SendString( "Price Needed =" ) ;
 
-			CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+			CLCD_WriteFloatingNumber( ( Price - Credit_Recycle ) , 2 , ROW_3 , COL_16 ) ;
 
-			while( Coin_Module_Price != ( Price - Credit_Recycle ) )
-			{
-				Coin_Module_Price += Coin_Value();
-				CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
-			}
+		}
 
-			_delay_ms(1500);
-			CLCD_voidClearScreen();
-			CLCD_u8SendString( "Payment is Received" ) ;
+		/* 1 Second Delay */
+		_delay_ms( _1_SEC );
 
-			if( Size == 500 )
-			{
-				/*Stepper Motor 1 ON*/
-				STEPPER_NEMA17_Control( DIO_u8PORTD , DIO_u8Pin0 , 360 ) ;
+		/* Clearing Display */
+		CLCD_voidClearScreen( ) ;
 
-			}
-			else if ( Size == 1000 )
-			{
-				/*Stepper Motor 2 ON*/
-				STEPPER_NEMA17_Control( DIO_u8PORTD , DIO_u8Pin1 , 360 ) ;
-			}
+		/* Displaying Price Needed For Bottle and Keep Deducting From it While User Insert Coins */
+		CLCD_u8SendString( "Price Needed =" ) ;
 
-			_delay_ms(1000);
-			CLCD_voidClearScreen() ;
-			CLCD_u8SendString( "Take Your Bottle" ) ;
-			_delay_ms(1000);
-			Credit_Recycle=NULL;
-			break;
-	case '3':
-		/*Back to Main Menu Option*/
-		BackToMainMenu();
+		CLCD_WriteFloatingNumber( ( Price - Credit_Recycle - Coin_Module_Price ) , 2 , ROW_1 , COL_16 ) ;
+
+		/* Polling Until User Insert Required Amount of Coins */
+		while( Coin_Module_Price != ( Price - Credit_Recycle ) )
+		{
+			/* Polling Until User Insert A Coin and Adding it to Variable ( Coin_Module_Price ) */
+			/* Coin_Value Returns Value of Inserted Coin */
+			Coin_Module_Price = Coin_Module_Price + Coin_Value( ) ;
+
+			/* When User Add A Coin Display will Show Price Needed is Being Decreased */
+			CLCD_WriteFloatingNumber( ( Price - Credit_Recycle - Coin_Module_Price ) , 2 , ROW_1 , COL_16 ) ;
+		}
+
+		/* While is Terminated When User Inserts Right Amount of Coins Required for His Choice */
+
+		/* 1 Second Delay */
+		_delay_ms( _1_SEC );
+
+		/* Clearing Display  */
+		CLCD_voidClearScreen( ) ;
+
+		CLCD_u8SendString( "Payment is Received" ) ;
+
+		/* Checking On Size of Bottle User Chose To Control A Motor From the 2 Motors */
+		if( Size == 500 )  /* 500 mL */
+		{
+			/* User Chose 500 mL Bottle */
+
+			/* Stepper Motor 1 ON ---> Connected to PIN D0 */
+
+			STEPPER_NEMA17_Control( STEPPER_MOTOR_1_500mL_PORT , STEPPER_MOTOR_1_500mL_PIN , 360 ) ;
+
+		}
+		else if ( Size == 1000 )  /* 1000 mL */
+		{
+			/* User Chose 1000 mL Bottle */
+
+			/* Stepper Motor 2 ON ---> Connected to PIN D1 */
+
+			STEPPER_NEMA17_Control( STEPPER_MOTOR_2_1000mL_PORT , STEPPER_MOTOR_2_1000mL_PIN , 360 ) ;
+		}
+
+		/* 1 Second Delay */
+		_delay_ms( _1_SEC ) ;
+
+		/* Clearing Display  */
+		CLCD_voidClearScreen( ) ;
+
+		/* Displaying On First Address */
+		CLCD_u8GoToRowColumn( ROW_1 , COL_1 ) ;
+		CLCD_u8SendString( "Take Your Bottle" ) ;
+
+		/* 2 Second Delay */
+		_delay_ms( _2_SEC );
+
+		/* Return Credit Back To Zero */
+		/* If There was Recycle Credit User definitely used it */
+		/* If There was not Recycle Credit then It's Default Value is 0 ( NULL ) */
+		Credit_Recycle = NULL ;
 		break;
+
+		/* User Pressed 3 to Return Back to Main Menu */
+	case '3':
+
+		/*Back to Main Menu Option*/
+		BackToMainMenu( ) ;
+		break;
+
+		/* User Pressed Any Key Other Than 1 , 2 , 3 */
 	default :
-		CLCD_voidClearScreen();
-		CLCD_u8GoToRowColumn(0,0);
-		CLCD_u8SendString("WRONG OPTION");
-		CLCD_u8GoToRowColumn(1,0);
-		CLCD_u8SendString("PLEASE ENTER NUMBER");
-		CLCD_u8GoToRowColumn(2,0);
-		CLCD_u8SendString("FROM 1 -> 3");
-		_delay_ms(2000);
-		BottleNeddedMode();
+
+		/* Clearing Display */
+		CLCD_voidClearScreen( ) ;
+
+/* Display Wrong Option and Right Options Should be Chosen */
+		CLCD_u8GoToRowColumn( ROW_1 , COL_1 ) ;
+		CLCD_u8SendString("WRONG OPTION") ;
+
+		CLCD_u8GoToRowColumn( ROW_2 , COL_1 ) ;
+		CLCD_u8SendString( "PLEASE ENTER NUMBER" ) ;
+
+		CLCD_u8GoToRowColumn( ROW_3 , COL_1 );
+		CLCD_u8SendString( "FROM 1 -> 3" ) ;
+
+		/* 2 Second Delay */
+		_delay_ms( _2_SEC ) ;
+
+		/* Recursive Call For Function To Go Into Right Option */
+		BottleNeddedMode( ) ;
 		break;
 	}
 }
+
+
+
+
 void BottleRecycle(void)
 {
 	/*To get sure screen is clear*/

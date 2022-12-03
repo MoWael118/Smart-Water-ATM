@@ -9,14 +9,14 @@
 #define FLOWMETER_INTERFACE_H_
 
 /*
- * NOTE: This Function is used in FLOWMETER_voidGetVolume
- *          kindly do not use it */
-void FLOWMETER_Init( s16 * Copy_pu16VolumeInSec , s16 * Copy_pu16FlowRate ) ;
+ * NOTE: Use This Function in The beginning
+ * */
+void FLOWMETER_Init( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRate ) ;
 
 /*
  * NOTE: Function Will Not Work Correctly if GIE is disable
  *        make sure to enable it before Calling Function*/
-void FLOWMETER_voidGetVolume( s16 * Copy_pu16VolumeInSec , s16 * Copy_pu16FlowRate ) ;
+void FLOWMETER_voidGetVolume( u16 * Copy_pu16VolumeInSec , u16 * Copy_pu16FlowRate ) ;
 
 /*
  * NOTE : Function Should Be Called After Finishing Flow meter Job in Order to
