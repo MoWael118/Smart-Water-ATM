@@ -72,7 +72,7 @@ void main(void)
 	FLOWMETER_Init( &Flow_Volume , &Flow_Rate ) ;
 
 	/*Going To Position Of Row One And Column One On LCD*/
-	CLCD_u8GoToRowColumn(0,0) ;
+	CLCD_u8GoToRowColumn(ROW_1,COL_1) ;
 
 	/* Displaying Welcome On LCD */
 	CLCD_u8SendString("Welcome") ;
@@ -151,19 +151,19 @@ u8 MainMenu(void)
 	CLCD_u8SendString("Enter Your Choice");
 
 	/* Going To Position Of Row Two And Column One On LCD */
-	CLCD_u8GoToRowColumn(1,0);
+	CLCD_u8GoToRowColumn(ROW_2,COL_1);
 
 	/* Displaying 1- Bottle Recycle On LCD */
 	CLCD_u8SendString("1- Bottle Recycle");
 
 	/* Going To Position Of Row Three And Column One On LCD */
-	CLCD_u8GoToRowColumn(2,0);
+	CLCD_u8GoToRowColumn(ROW_3,COL_1);
 
 	/* Displaying 2- Bottle needed On LCD */
 	CLCD_u8SendString("2- Bottle needed");
 
 	/* Going To Position Of Row Three And Column One On LCD */
-	CLCD_u8GoToRowColumn(3,0);
+	CLCD_u8GoToRowColumn(ROW_3,COL_1);
 
 	/* Displaying 3- Refill needed On LCD */
 	CLCD_u8SendString("3- Refill");
@@ -181,13 +181,13 @@ u8 MainMenu(void)
 		CLCD_u8SendString("Wrong Input");
 
 		/* Going To Position Of Row Two And Column One On LCD */
-		CLCD_u8GoToRowColumn(1,0);
+		CLCD_u8GoToRowColumn(ROW_2,COL_1);
 
 		/* Displaying Please enter number On LCD */
 		CLCD_u8SendString("Please enter number");
 
 		/* Going To Position Of Row Three And Column One On LCD */
-		CLCD_u8GoToRowColumn(2,0);
+		CLCD_u8GoToRowColumn(ROW_3,COL_1);
 
 		/* Displaying from(1-3) On LCD */
 		CLCD_u8SendString("from(1-3)");
