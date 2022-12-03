@@ -78,7 +78,7 @@ void main(void)
 	CLCD_u8SendString("Welcome") ;
 
 	/* Delay For 2 Seconds To Be Able To See Welcome On LCD */
-	_delay_ms(2000) ;
+	_delay_ms(_2_SEC) ;
 
 	while(1)
 	{
@@ -163,7 +163,7 @@ u8 MainMenu(void)
 	CLCD_u8SendString("2- Bottle needed");
 
 	/* Going To Position Of Row Three And Column One On LCD */
-	CLCD_u8GoToRowColumn(ROW_3,COL_1);
+	CLCD_u8GoToRowColumn(ROW_4,COL_1);
 
 	/* Displaying 3- Refill needed On LCD */
 	CLCD_u8SendString("3- Refill");
@@ -193,7 +193,7 @@ u8 MainMenu(void)
 		CLCD_u8SendString("from(1-3)");
 
 		/* Delay For 2 Seconds To Be Able To Read LCD */
-		_delay_ms(2000);
+		_delay_ms(_2_SEC);
 
 		/* Clearing LCD Screen */
 		CLCD_voidClearScreen();
@@ -261,115 +261,255 @@ void Menu_Choosing(void)
 
 
 
-
+/*
+ * Prototype   : void Refill_Mode(void)
+ *
+ * Description : Executing Refill Mode Piece Of Code
+ *
+ * Arguments   : void
+ *
+ * return      : void
+ *
+ */
 void Refill_Mode(void)
 {
+	/*Initializing a Variable to Hold State Of KeyPad*/
 	u8 KeyPad_State = KEYPAD_NO_PRESSED_KEY;
-	/*Show The Refill Menu*/
+
+	/*Clearing Screen From Previous Showed Screen*/
 	CLCD_voidClearScreen();
-	CLCD_u8GoToRowColumn(0,0);
+
+	/*Moving Cursor To First Row and First Column of LCD*/
+	CLCD_u8GoToRowColumn(ROW_1,COL_1);
+
+	/*Displaying a Message On LCD To Select an option*/
 	CLCD_u8SendString("select an option :");
-	CLCD_u8GoToRowColumn(1,0);
+
+	/*Moving Cursor To Second Row and First Column of LCD*/
+	CLCD_u8GoToRowColumn(ROW_2,COL_1);
+
+	/*Displaying The First option On LCD*/
 	CLCD_u8SendString("1- Capacity = 500mL");
-	CLCD_u8GoToRowColumn(2,0);
+
+	/*Moving Cursor To Third Row and First Column of LCD*/
+	CLCD_u8GoToRowColumn(ROW_3,COL_1);
+
+	/*Displaying The Second option On LCD*/
 	CLCD_u8SendString("2- Capacity = 1L");
-	CLCD_u8GoToRowColumn(3,0);
+
+	/*Moving Cursor To Fourth Row and First Column of LCD*/
+	CLCD_u8GoToRowColumn(ROW_4,COL_1);
+
+	/*Displaying The Third Option On LCD*/
 	CLCD_u8SendString("3- Back to Main Menu");
-	/*GET pressed key from user*/
+
+	/*Assigning The Keypad Pressed Key value to KeyPad_State*/
 	KeyPad_State = KEYPAD_u8PollingUntilKeyPressed();
 
+	/*Checking Which KeyPad Button is pressed */
 	switch (KeyPad_State)
 	{
-	/*Show Needed Price For 500mL */
+
+	/*Case 1 : the Pressed Key is '1' */
+	/*Note : No Break in this case Because it has the same piece of code from upcoming case*/
 	case '1' :
+
+		/*Case 2 : the Pressed Key is '2'*/
 	case '2' :
 
+		/*Checking Pressed Key if equal 1 To Assign Suitable Price and Capacity to our Variables*/
 		if( KeyPad_State == '1' )
+
 		{
-			Price = 3 ;
-			Water_Capacity = 500 ;
+			/*Assigning Price to 3*/
+			Price = _500mL_Price ;
+
+			/*Assigning Water_Capacity to 500 mL*/
+			Water_Capacity = _500mL ;
+
 		}
+		/*Checking Pressed Key if equal 2 To Assign Suitable Price and Capacity to our Variables*/
 		else if ( KeyPad_State == '2' )
+
 		{
-			Price = 5 ;
-			Water_Capacity = 1000 ;
+			/*Assigning Price to 3*/
+			Price = _1L_Price ;
+
+			/*Assigning Water_Capacity to 1000 mL*/
+			Water_Capacity = _1L ;
+
 		}
 
+		/*Clearing LCD From Previous Page*/
 		CLCD_voidClearScreen();
-		CLCD_u8GoToRowColumn(0,0);
 
+		/*Moving Cursor To First Row and First Column of LCD*/
+		CLCD_u8GoToRowColumn(ROW_1,COL_1);
+
+		/*Checking User Credit*/
+
+		/*If There is no Credit For User*/
 		if(Credit_Recycle == NULL)
 		{
+			/*Displaying The Needed Price From User On LCD*/
 			CLCD_u8SendString( "Price Needed =" ) ;
-			CLCD_WriteFloatingNumber( Price , 1 , 0 , 14 ) ;
+
+			/*Writing The Price Value to User*/
+			CLCD_WriteFloatingNumber( Price , _1Number_After_DecimalPoint , ROW_1 , COL_15 ) ;
 
 		}
+
+		/*If the User Have Credit Value from Recycling Bottles*/
 		else if(Credit_Recycle != NULL)
 		{
+
+			/*Displaying Message Price = */
 			CLCD_u8SendString( "Price =" ) ;
-			CLCD_WriteFloatingNumber( Price , 1 , 0 , 8 ) ;
+
+			/*Writing The Price Value (Before Discount) to User*/
+			CLCD_WriteFloatingNumber( Price , _1Number_After_DecimalPoint , ROW_1 , COL_9 ) ;
+
+			/*Displaying EGP for Egyptian Pound*/
 			CLCD_u8SendString( "EGP" ) ;
-			CLCD_u8GoToRowColumn( 1 , 0 ) ;
+
+			/*Going To Second Line ON LCD To Display The Credit*/
+			CLCD_u8GoToRowColumn( ROW_2 , COL_1 ) ;
+
+			/*Displaying Message Credit = */
 			CLCD_u8SendString( "Credit = " ) ;
-			CLCD_WriteFloatingNumber( Credit_Recycle , 2 , 1 , 9 );
-			CLCD_u8GoToRowColumn( 2 , 0 ) ;
+
+			/*Writing The Credit Value on LCD*/
+			CLCD_WriteFloatingNumber( Credit_Recycle , _2Numbers_After_DecimalPoint , ROW_2 , COL_10 );
+
+			/*Going To the start of Third Line of LCD */
+			CLCD_u8GoToRowColumn( ROW_3 , COL_1) ;
+
+			/*Displaying Message Price Needed = */
 			CLCD_u8SendString( "Price Needed =" ) ;
-			CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , 2 , 2 , 14 );
+
+			/*Sending the Value of the Price After Discount*/
+			CLCD_WriteFloatingNumber( (Price-Credit_Recycle) , _2Numbers_After_DecimalPoint , ROW_3 , COL_15 );
 		}
-		_delay_ms(2000);
 
-		CLCD_voidClearScreen();
-		CLCD_u8SendString( "Price Needed =" ) ;
+		/*Going To the start of Second Line of LCD */
+		CLCD_u8GoToRowColumn( ROW_4 , COL_1) ;
 
-		CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+		/*Displaying Message Please Insert Coins */
+		CLCD_u8SendString( "please Insert Coins" ) ;
 
+		/* Waiting until Coins inserted value will be equal to The Net Price*/
 		while( Coin_Module_Price != ( Price - Credit_Recycle ) )
 		{
+			/* Updating Value of Coins Inserted*/
 			Coin_Module_Price += Coin_Value();
-			CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , 2 , 0 , 14 );
+
+			/*Checking Credit Recycle Value To Determine Which Page on LCD Is Displayed*/
+			if (Credit_Recycle==NULL)
+			{
+				/*Displaying The Remaining Price needed to be inserted on LCD At Line 1*/
+				CLCD_WriteFloatingNumber( (Price-Coin_Module_Price) , _2Numbers_After_DecimalPoint , ROW_1 , COL_15 );
+
+			}
+			else if (Credit_Recycle!=NULL)
+			{
+				/*Displaying The Remaining Price needed to be inserted on LCD At Line 3*/
+				CLCD_WriteFloatingNumber( (Price-Credit_Recycle-Coin_Module_Price) , _2Numbers_After_DecimalPoint , ROW_3 , COL_15 );
+			}
 		}
 
-		_delay_ms(1500);
+		/*1 Second Waiting*/
+		_delay_ms(_1_SEC);
+
+		/*Clearing LCD Screen*/
 		CLCD_voidClearScreen();
+
+		/*Display a Message To user to indicate for Successful Payment Transaction */
 		CLCD_u8SendString( "Payment is Received" ) ;
 
-		_delay_ms(1500);
+		/*2 Seconds Waiting So the user can see the previous Message*/
+		_delay_ms(_2_SEC);
+
+		/*Clearing LCD*/
 		CLCD_voidClearScreen(  ) ;
 
+		/*Check Whether Bottle is Exist or not*/
 		if( Bottle_Exist == NON_EXIST )
-		{
-			CLCD_u8SendString( "Put Your Bottle" ) ;
-		}
 
+		{
+			/*If Bottle doesn't Exist Displaying message to User to put his bottle*/
+			CLCD_u8SendString( "Put Your Bottle" ) ;
+
+		}
+		/*Executing Function Bottle_Filling (Waiting until bottle is put and then starting to fill the bottle)*/
 		Bottle_Filling();
 
+		/*if Existence of bottle changed at any time While Filling...
+		 * An interrupt Will be generated to Change The Bottle_Exist State To NON_EXIST*/
+
+		/* While Bottle Existence State is Negative*/
 		while ( Bottle_Exist == NON_EXIST  )
 		{
-			CLCD_u8GoToRowColumn(0,0);
+			/*Going To the start of First Line on LCD */
+			CLCD_u8GoToRowColumn(ROW_1,COL_1);
+
+			/*Displaying Warning Message To user to put his bottle back*/
 			CLCD_u8SendString( "Return Your Bottle" ) ;
+
+			/*Executing Function Bottle_Filling (Waiting until bottle is put and then starting to fill the bottle)*/
 			Bottle_Filling();
 		}
+		/*Waiting 1 Second*/
+		_delay_ms(_1_SEC);
 
-		_delay_ms(2000);
+		/*Clearing LCD Screen*/
 		CLCD_voidClearScreen();
+
+		/*Displaying Message When Filling is Done*/
 		CLCD_u8SendString( "Enjoy Your Water" );
-		_delay_ms(2000);
+
+		/*Waiting 2 Second*/
+		_delay_ms(_2_SEC);
+
+		/*Assigning Coin_Module_Price to Zero To Start The New Mode*/
 		Coin_Module_Price = NULL ;
+
+		/*Assigning User Credit to Zero To Calculate The new Credit for new User if required*/
 		Credit_Recycle=NULL;
+
+		/*Breaking Out This Case*/
 		break;
 
+		/*Case 3 : the Pressed Key is '3'*/
 	case '3' :
-		/*Call For Main menu Function*/
+
+		/*Going Back To the Main menu Page*/
 		BackToMainMenu();
+
+		/*Breaking Out This Case*/
 		break;
-		/*Display Wrong input and try again*/
+
+		/*Default Case : the Pressed Key is Neither 1,2 nor 3*/
 	default :
+
+		/*Clearing LCD Screen*/
 		CLCD_voidClearScreen();
-		CLCD_u8GoToRowColumn(0,0);
+
+		/*Going To The Start of First Line of LCD*/
+		CLCD_u8GoToRowColumn(ROW_1,COL_1);
+
+		/*Displaying Error Message To indicate for Wrong Input*/
 		CLCD_u8SendString("Wrong Input");
-		CLCD_u8GoToRowColumn(1,0);
+
+		/*Going To The Start of Second Line of LCD*/
+		CLCD_u8GoToRowColumn(ROW_2,COL_1);
+
+		/*Displaying Message To Make User Try Again*/
 		CLCD_u8SendString("Please Try Again");
-		_delay_ms(2000);
+
+		/*2 Seconds Waiting So the User Can see The message*/
+		_delay_ms(_2_SEC);
+
+		/*Starting Our Mode Again*/
 		Refill_Mode();
 	}
 
@@ -556,6 +696,9 @@ void BottleNeddedMode(void)
 		/* If There was Recycle Credit User definitely used it */
 		/* If There was not Recycle Credit then It's Default Value is 0 ( NULL ) */
 		Credit_Recycle = NULL ;
+
+		/* Return Coin Module Price Back To Zero */
+		Coin_Module_Price=NULL;
 		break;
 
 		/* User Pressed 3 to Return Back to Main Menu */
@@ -571,7 +714,7 @@ void BottleNeddedMode(void)
 		/* Clearing Display */
 		CLCD_voidClearScreen( ) ;
 
-/* Display Wrong Option and Right Options Should be Chosen */
+		/* Display Wrong Option and Right Options Should be Chosen */
 		CLCD_u8GoToRowColumn( ROW_1 , COL_1 ) ;
 		CLCD_u8SendString("WRONG OPTION") ;
 
@@ -592,69 +735,149 @@ void BottleNeddedMode(void)
 
 
 
-
+/*
+ * Prototype   : void BottleRecycle(void)
+ *
+ * Description : Determine Number of bottles inserted to recycle And calculate the Corresponding Credit Value
+ *
+ * Arguments   : void
+ *
+ * return      : void
+ *
+ */
 void BottleRecycle(void)
 {
-	/*To get sure screen is clear*/
+	/*LCD CLEARING */
 	CLCD_voidClearScreen();
-	/*Start counting number of bottles inserted*/
+
+	/*Displaying Option To Exit Recycling Process*/
 	CLCD_u8SendString("Press 0 to exit");
+
+	/* waiting While The User didn't Exit This Process*/
 	while (KEYPAD_u8GetPressedKey() !=  '0' )
 	{
+		/*Checking Sensor Read */
+		/*If Sensor Reads Signal then there is Bottle inserted*/
 		if(IR_Sensor_u8Read() == 1)
 		{
+			/*Waiting until The Whole Bottle Crossed the sensor*/
 			while(IR_Sensor_u8Read()== 1);
+
+			/*Increasing Number Of bottles */
 			NoOfBottlesInserted++;
 		}
-		CLCD_u8GoToRowColumn(1,0);
+
+		/*Going To the start of second line of LCD*/
+		CLCD_u8GoToRowColumn(ROW_2,COL_1);
+
+		/*Displaying Message Number of bottles inserted*/
 		CLCD_u8SendString("Number of bottles ");
-		CLCD_u8GoToRowColumn(2,0);
+
+		/*Going To the start of Third line of LCD*/
+		CLCD_u8GoToRowColumn(ROW_3,COL_1);
+
+		/*Displaying Message Number of bottles inserted*/
 		CLCD_u8SendString("inserted =");
-		CLCD_voidWriteIntegerNumber(NoOfBottlesInserted,2,11);
-		CLCD_u8GoToRowColumn(3,0);
+
+		/*Writing The Number Of bottles Inserted To User*/
+		CLCD_voidWriteIntegerNumber(NoOfBottlesInserted,ROW_3,COL_12);
+
+		/*Going To the start of Fourth line of LCD*/
+		CLCD_u8GoToRowColumn(ROW_4,COL_1);
+
+		/*Displaying Message Your Credit =*/
 		CLCD_u8SendString("Your Credit=");
-		CLCD_WriteFloatingNumber((f32)(NoOfBottlesInserted/2.0),2,3,12);
-		CLCD_u8GoToRowColumn(3,17);
+
+		/*Writing The Equivalent Value Of bottles Inserted To User*/
+		CLCD_WriteFloatingNumber( (f32)( NoOfBottlesInserted / 2.0 ) , _2Numbers_After_DecimalPoint , ROW_4 , COL_13 );
+
+		/*Going To the start of Fourth line of LCD*/
+		CLCD_u8GoToRowColumn(ROW_4 , COL_18);
+
+		/*Displaying Message Number of bottles inserted*/
 		CLCD_u8SendString("EGP");
 	}
-	Credit_Recycle= (f32)(NoOfBottlesInserted/2.0);
+
+	/*Dividing Number of Recycled Bottles by 2 To Get Equivalent Credit Value*/
+	Credit_Recycle= (f32)( NoOfBottlesInserted / 2.0 );
 	BackToMainMenu();
 }
 
+/*
+ * Prototype   : void ISR1_Sensing_Bottle_Exist(void)
+ *
+ * Description : Getting the value of IR Sensor
+ *
+ * Arguments   : void
+ *
+ * return      : void
+ *
+ */
 void ISR1_Sensing_Bottle_Exist(void)
 {
+	/*Getting IR Sensor Value And save it at Global Variable*/
 	DIO_u8GetPinValue(DIO_u8PORTD,DIO_u8Pin2,&Bottle_Exist);
 }
 
+
+/*
+ * Prototype   : void Bottle_Filling(void)
+ *
+ * Description : Starting To Fill Water To the Bottle
+ *
+ * Arguments   : void
+ *
+ * return      : void
+ *
+ */
+
 void Bottle_Filling (void)
 {
+	/*Declared Variable Flag*/
 	u8 Flag=0;
+
+	/*Busy Waiting until User Put A Bottle*/
 	while( Bottle_Exist == NON_EXIST ) ;
+
+	/*Clearing LCD*/
 	CLCD_voidClearScreen();
+
+
 	while( ( Bottle_Exist == EXIST ) && ( Flow_Volume < Water_Capacity ) )
 	{
-		if(Flag ==0){
+		/*Checking Flag Value*/
+		if(Flag ==0)
+		{
 			/*Pump on */
 			DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin5 , DIO_u8PIN_HIGH ) ;
 
 			/*valve on*/
 			DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin6 , DIO_u8PIN_HIGH ) ;
 
-			CLCD_u8GoToRowColumn(1,0);
+			/*Going To The Start of Second LINE*/
+			CLCD_u8GoToRowColumn(ROW_2,0);
+
+			/*Displaying Message VOLUME = */
 			CLCD_u8SendString("Volume = ") ;
 			//CLCD_u8GoToRowColumn(0,0);
 			//CLCD_u8SendString( "Flow Rate = " );
+
+			/*Assigning Flag To 1 So that This Condition not repeated again*/
 			Flag =1;
 		}
+
+		/*Getting Volume Passed Through flow meter and the flow rate USING Function FLOWMETER_voidGetVolume */
 		FLOWMETER_voidGetVolume( &Flow_Volume , &Flow_Rate ) ;
 
 
 		//CLCD_voidWriteIntegerNumber( (s32)Flow_Rate  , 0 , 12 );
 
-		CLCD_voidWriteIntegerNumber( (s32)Flow_Volume , 1 , 9 ) ;
+		/*Writing Filled Volume On LCD*/
+		CLCD_voidWriteIntegerNumber( (s32)Flow_Volume , ROW_2 , COL_10 ) ;
 
 	}
 
+	/*Finishing FLOW METER WORK*/
 	FLOWMETER_voidFinished();
 
 	/*pump off*/
@@ -662,6 +885,10 @@ void Bottle_Filling (void)
 
 	/*Valve off*/
 	DIO_u8SetPinValue( DIO_u8PORTA , DIO_u8Pin6 , DIO_u8PIN_LOW  ) ;
-	_delay_ms(1000);
+
+	/*Waiting 1 Second*/
+	_delay_ms(_1_SEC);
+
+	/*Clearing LCD*/
 	CLCD_voidClearScreen();
 }
