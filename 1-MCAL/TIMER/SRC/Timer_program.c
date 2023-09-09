@@ -673,9 +673,3 @@ void __vector_4 (void)
 	}
 
 }
-
-
-
-
-
-
